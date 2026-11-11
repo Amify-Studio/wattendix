@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "meter": {
-        "title": "Wattcast",
+        "title": "Wattendix",
         "description": "Only the home's consumption is required; everything else is optional and can be changed later. Start by telling how this measurement reaches Home Assistant.",
         "data": {
           "name": "Name",
@@ -11,7 +11,7 @@
           "subscription_mode": "Standing charge"
         },
         "data_description": {
-          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattcast then tracks day, week, month and year, without the current hour.",
+          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattendix then tracks day, week, month and year, without the current hour.",
           "price_mode": "Without a price, everything is tracked in kWh. \"One price per sensor\" fits when peak and off-peak each have their own sensor.",
           "subscription_mode": "Ignored without a price. Spread over the days of the month."
         }
@@ -61,7 +61,7 @@
       },
       "weather": {
         "title": "Weather",
-        "description": "Optional. With an outdoor temperature, Wattcast learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
+        "description": "Optional. With an outdoor temperature, Wattendix learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
         "data": {
           "weather": "Weather entity (forecasts)",
           "outdoor_sensor": "Outdoor thermometer"
@@ -69,7 +69,7 @@
       },
       "heating": {
         "title": "Heating",
-        "description": "Optional. With the heat pump's consumption, Wattcast compares it to what is expected for how cold it has been (degree-days).",
+        "description": "Optional. With the heat pump's consumption, Wattendix compares it to what is expected for how cold it has been (degree-days).",
         "data": {
           "heat_pump": "Heat pump consumption",
           "hdd_base": "Degree-day base",
@@ -95,7 +95,7 @@
   "options": {
     "step": {
       "meter": {
-        "title": "Wattcast",
+        "title": "Wattendix",
         "description": "Only the home's consumption is required; everything else is optional and can be changed later. Start by telling how this measurement reaches Home Assistant.",
         "data": {
           "name": "Name",
@@ -104,7 +104,7 @@
           "subscription_mode": "Standing charge"
         },
         "data_description": {
-          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattcast then tracks day, week, month and year, without the current hour.",
+          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattendix then tracks day, week, month and year, without the current hour.",
           "price_mode": "Without a price, everything is tracked in kWh. \"One price per sensor\" fits when peak and off-peak each have their own sensor.",
           "subscription_mode": "Ignored without a price. Spread over the days of the month."
         }
@@ -154,7 +154,7 @@
       },
       "weather": {
         "title": "Weather",
-        "description": "Optional. With an outdoor temperature, Wattcast learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
+        "description": "Optional. With an outdoor temperature, Wattendix learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
         "data": {
           "weather": "Weather entity (forecasts)",
           "outdoor_sensor": "Outdoor thermometer"
@@ -162,7 +162,7 @@
       },
       "heating": {
         "title": "Heating",
-        "description": "Optional. With the heat pump's consumption, Wattcast compares it to what is expected for how cold it has been (degree-days).",
+        "description": "Optional. With the heat pump's consumption, Wattendix compares it to what is expected for how cold it has been (degree-days).",
         "data": {
           "heat_pump": "Heat pump consumption",
           "hdd_base": "Degree-day base",

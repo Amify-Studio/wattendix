@@ -14,7 +14,7 @@ def steps(fr: bool) -> dict:
 
     return {
         "meter": {
-            "title": "Wattcast",
+            "title": "Wattendix",
             "description": t(
                 "Seule la mesure de consommation du logement est nécessaire ; tout le reste est facultatif et se modifie ensuite. Commencez par dire comment cette mesure arrive dans Home Assistant.",
                 "Only the home's consumption is required; everything else is optional and can be changed later. Start by telling how this measurement reaches Home Assistant.",
@@ -27,8 +27,8 @@ def steps(fr: bool) -> dict:
             },
             "data_description": {
                 "source_mode": t(
-                    "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattcast suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
-                    "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattcast then tracks day, week, month and year, without the current hour.",
+                    "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattendix suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
+                    "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattendix then tracks day, week, month and year, without the current hour.",
                 ),
                 "price_mode": t(
                     "Sans prix, tout est suivi en kWh. « Un prix par capteur » convient quand heures pleines et heures creuses ont chacune leur capteur.",
@@ -105,8 +105,8 @@ def steps(fr: bool) -> dict:
         "weather": {
             "title": t("Météo", "Weather"),
             "description": t(
-                "Facultatif. Avec une température extérieure, Wattcast apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
-                "Optional. With an outdoor temperature, Wattcast learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
+                "Facultatif. Avec une température extérieure, Wattendix apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
+                "Optional. With an outdoor temperature, Wattendix learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
             ),
             "data": {
                 "weather": t("Entité météo (prévisions)", "Weather entity (forecasts)"),
@@ -116,8 +116,8 @@ def steps(fr: bool) -> dict:
         "heating": {
             "title": t("Chauffage", "Heating"),
             "description": t(
-                "Facultatif. Avec la consommation de la pompe à chaleur, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
-                "Optional. With the heat pump's consumption, Wattcast compares it to what is expected for how cold it has been (degree-days).",
+                "Facultatif. Avec la consommation de la pompe à chaleur, Wattendix la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
+                "Optional. With the heat pump's consumption, Wattendix compares it to what is expected for how cold it has been (degree-days).",
             ),
             "data": {
                 "heat_pump": t("Consommation de la pompe à chaleur", "Heat pump consumption"),
@@ -235,7 +235,7 @@ def build(fr: bool) -> dict:
 
 
 if __name__ == "__main__":
-    base = pathlib.Path("custom_components/wattcast")
+    base = pathlib.Path("custom_components/wattendix")
     english = json.dumps(build(False), indent=2, ensure_ascii=False) + "\n"
     (base / "strings.json").write_text(english, encoding="utf-8", newline="\n")
     (base / "translations" / "en.json").write_text(english, encoding="utf-8", newline="\n")

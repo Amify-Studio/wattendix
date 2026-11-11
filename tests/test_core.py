@@ -12,19 +12,19 @@ from zoneinfo import ZoneInfo
 import pytest
 
 # Load the core package without importing Home Assistant.
-CORE = Path(__file__).parent.parent / "custom_components" / "wattcast" / "core"
+CORE = Path(__file__).parent.parent / "custom_components" / "wattendix" / "core"
 spec = importlib.util.spec_from_file_location(
-    "wattcast_core", CORE / "__init__.py", submodule_search_locations=[str(CORE)]
+    "wattendix_core", CORE / "__init__.py", submodule_search_locations=[str(CORE)]
 )
 package = importlib.util.module_from_spec(spec)
-sys.modules["wattcast_core"] = package
+sys.modules["wattendix_core"] = package
 spec.loader.exec_module(package)
 
-from wattcast_core import model as mdl  # noqa: E402
-from wattcast_core.engine import Engine, build_days, remaining_today  # noqa: E402
-from wattcast_core.meter import Meter, convert, kind_of  # noqa: E402
-from wattcast_core.periods import days_in_month, end_of, fraction, start_of  # noqa: E402
-from wattcast_core.tariff import MODE_PEAK, Tariff, parse_ranges  # noqa: E402
+from wattendix_core import model as mdl  # noqa: E402
+from wattendix_core.engine import Engine, build_days, remaining_today  # noqa: E402
+from wattendix_core.meter import Meter, convert, kind_of  # noqa: E402
+from wattendix_core.periods import days_in_month, end_of, fraction, start_of  # noqa: E402
+from wattendix_core.tariff import MODE_PEAK, Tariff, parse_ranges  # noqa: E402
 
 TZ = ZoneInfo("Europe/Paris")
 

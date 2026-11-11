@@ -27,14 +27,14 @@ localStorage.setItem("hassTokens", JSON.stringify({access_token: %s, token_type:
   expires_in: 315360000, refresh_token: "", hassUrl: location.origin, clientId: location.origin + "/",
   expires: Date.now() + 315360000000}));
 localStorage.setItem("selectedLanguage", JSON.stringify(lang));
-location.replace("/config/integrations/integration/wattcast");
+location.replace("/config/integrations/integration/wattendix");
 </script>"""
 
 
 def entries(access: str) -> list[dict]:
     titles = {names["title"] for names in NAMES.values()}
     return [e for e in ha.http("/api/config/config_entries/entry", token=access)
-            if e["domain"] == "wattcast" and e["title"] in titles]
+            if e["domain"] == "wattendix" and e["title"] in titles]
 
 
 def clean(access: str) -> None:
@@ -72,7 +72,7 @@ def main() -> None:
         {"weather": f"weather.demo_{lang}", "outdoor_sensor": f"sensor.demo_{lang}_outdoor"},
         {"heat_pump": [f"sensor.demo_{lang}_heat_pump"], "hdd_base": 18, "season_month": 10},
     ]
-    step = ha.http("/api/config/config_entries/flow", {"handler": "wattcast", "show_advanced_options": False}, access)
+    step = ha.http("/api/config/config_entries/flow", {"handler": "wattendix", "show_advanced_options": False}, access)
     for answer in answers:
         step = ha.http(f"/api/config/config_entries/flow/{step['flow_id']}", answer, access)
         if step.get("errors"):

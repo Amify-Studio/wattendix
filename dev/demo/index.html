@@ -1,10 +1,10 @@
 <!doctype html>
-<!-- The real Wattcast card fed with invented data, for the screenshots of the README.
+<!-- The real Wattendix card fed with invented data, for the screenshots of the README.
      Driven by dev/screenshots.py. Query: lang, theme, width, home (full|kwh|delayed), config (JSON). -->
 <html>
 <head>
 <meta charset="utf-8">
-<title>Wattcast demo</title>
+<title>Wattendix demo</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
 <style>
   :root {
@@ -184,13 +184,13 @@ if (home === "full") {
   put("heating_season", 268.2, { expected: 259.1, gap: 3.5, degree_days: 204.7, period_start: new Date(2026, 9, 1).toISOString() });
 }
 
-const entry = { entry_id: home, title: "Wattcast", currency: "EUR", priced, delayed,
+const entry = { entry_id: home, title: "Wattendix", currency: "EUR", priced, delayed,
   subscription: priced, temperature: true, heating: home === "full", entities };
 const hass = {
   states, language, locale: { language },
   callWS: async (message) => {
-    if (message.type === "wattcast/info") return { entries: [entry] };
-    if (message.type === "wattcast/curve") return { points: curves[message.period] || [] };
+    if (message.type === "wattendix/info") return { entries: [entry] };
+    if (message.type === "wattendix/curve") return { points: curves[message.period] || [] };
     if (message.type === "recorder/statistics_during_period") {
       const id = message.statistic_ids[0];
       return { [id]: estimates[id] || [] };
@@ -203,9 +203,9 @@ document.documentElement.dataset.theme = query.get("theme") || "light";
 const stage = document.getElementById("stage");
 stage.style.width = `${query.get("width") || 520}px`;
 const script = document.createElement("script");
-script.src = "/custom_components/wattcast/frontend/wattcast-card.js";
+script.src = "/custom_components/wattendix/frontend/wattendix-card.js";
 script.onload = () => {
-  const card = document.createElement("wattcast-card");
+  const card = document.createElement("wattendix-card");
   card.setConfig({ entry: home, ...JSON.parse(query.get("config") || "{}") });
   stage.appendChild(card);
   card.hass = hass;

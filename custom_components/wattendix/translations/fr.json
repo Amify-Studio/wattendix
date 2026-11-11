@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "meter": {
-        "title": "Wattcast",
+        "title": "Wattendix",
         "description": "Seule la mesure de consommation du logement est nécessaire ; tout le reste est facultatif et se modifie ensuite. Commencez par dire comment cette mesure arrive dans Home Assistant.",
         "data": {
           "name": "Nom",
@@ -11,7 +11,7 @@
           "subscription_mode": "Abonnement"
         },
         "data_description": {
-          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattcast suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
+          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattendix suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
           "price_mode": "Sans prix, tout est suivi en kWh. « Un prix par capteur » convient quand heures pleines et heures creuses ont chacune leur capteur.",
           "subscription_mode": "Ignoré sans prix. Réparti au prorata des jours du mois."
         }
@@ -61,7 +61,7 @@
       },
       "weather": {
         "title": "Météo",
-        "description": "Facultatif. Avec une température extérieure, Wattcast apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
+        "description": "Facultatif. Avec une température extérieure, Wattendix apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
         "data": {
           "weather": "Entité météo (prévisions)",
           "outdoor_sensor": "Thermomètre extérieur"
@@ -69,7 +69,7 @@
       },
       "heating": {
         "title": "Chauffage",
-        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
+        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattendix la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
         "data": {
           "heat_pump": "Consommation de la pompe à chaleur",
           "hdd_base": "Base des degrés-jours",
@@ -95,7 +95,7 @@
   "options": {
     "step": {
       "meter": {
-        "title": "Wattcast",
+        "title": "Wattendix",
         "description": "Seule la mesure de consommation du logement est nécessaire ; tout le reste est facultatif et se modifie ensuite. Commencez par dire comment cette mesure arrive dans Home Assistant.",
         "data": {
           "name": "Nom",
@@ -104,7 +104,7 @@
           "subscription_mode": "Abonnement"
         },
         "data_description": {
-          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattcast suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
+          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattendix suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
           "price_mode": "Sans prix, tout est suivi en kWh. « Un prix par capteur » convient quand heures pleines et heures creuses ont chacune leur capteur.",
           "subscription_mode": "Ignoré sans prix. Réparti au prorata des jours du mois."
         }
@@ -154,7 +154,7 @@
       },
       "weather": {
         "title": "Météo",
-        "description": "Facultatif. Avec une température extérieure, Wattcast apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
+        "description": "Facultatif. Avec une température extérieure, Wattendix apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
         "data": {
           "weather": "Entité météo (prévisions)",
           "outdoor_sensor": "Thermomètre extérieur"
@@ -162,7 +162,7 @@
       },
       "heating": {
         "title": "Chauffage",
-        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
+        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattendix la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
         "data": {
           "heat_pump": "Consommation de la pompe à chaleur",
           "hdd_base": "Base des degrés-jours",

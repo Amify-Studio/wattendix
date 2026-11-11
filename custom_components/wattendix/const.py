@@ -1,10 +1,10 @@
-"""Constants for Wattcast."""
+"""Constants for Wattendix."""
 
 from __future__ import annotations
 
 from typing import Final
 
-DOMAIN: Final = "wattcast"
+DOMAIN: Final = "wattendix"
 VERSION: Final = "0.1.0"
 
 CONF_SOURCE: Final = "source"

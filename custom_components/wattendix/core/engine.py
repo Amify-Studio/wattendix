@@ -1,4 +1,4 @@
-"""Wattcast engine: period counters, estimates, year comparison, heating.
+"""Wattendix engine: period counters, estimates, year comparison, heating.
 
 Pure Python, no Home Assistant import. ``Engine.d`` is a JSON-serialisable
 dict that the integration persists as is.
@@ -96,7 +96,7 @@ def remaining_today(
 
 
 class Engine:
-    """All the state and the arithmetic of one Wattcast entry."""
+    """All the state and the arithmetic of one Wattendix entry."""
 
     def __init__(self, data: dict[str, Any] | None = None) -> None:
         self.d = new_state()

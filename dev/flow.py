@@ -1,4 +1,4 @@
-"""Drive the Wattcast config flow on the development instance, like the UI does.
+"""Drive the Wattendix config flow on the development instance, like the UI does.
 
     python dev/flow.py minimal     kWh only
     python dev/flow.py full        peak/off-peak + standing charge + weather + heating
@@ -14,13 +14,13 @@ import ha
 VARIANTS = {
     # Someone with almost nothing: a live counter, kWh only.
     "minimal": [
-        {"name": "Wattcast kWh", "source_mode": "live", "price_mode": "none", "subscription_mode": "none"},
+        {"name": "Wattendix kWh", "source_mode": "live", "price_mode": "none", "subscription_mode": "none"},
         {"source": ["sensor.dev_home_energy"], "max_power": 36},
         {},  # weather: nothing
     ],
     # Everything: peak/off-peak ranges, standing charge, weather, thermometer, heat pump.
     "full": [
-        {"name": "Wattcast", "source_mode": "live", "price_mode": "peak_offpeak", "subscription_mode": "fixed"},
+        {"name": "Wattendix", "source_mode": "live", "price_mode": "peak_offpeak", "subscription_mode": "fixed"},
         {"source": ["sensor.dev_home_energy"], "max_power": 12},
         {"price_peak": 0.1807, "price_offpeak": 0.1387, "offpeak_ranges": "23:10-07:11"},
         {"subscription": 19.37},
@@ -29,7 +29,7 @@ VARIANTS = {
     ],
     # Cloud meter data only: peak and off-peak statistics arriving the next day.
     "linky": [
-        {"name": "Wattcast Linky", "source_mode": "statistics", "price_mode": "per_source", "subscription_mode": "fixed"},
+        {"name": "Wattendix Linky", "source_mode": "statistics", "price_mode": "per_source", "subscription_mode": "fixed"},
         {"source": ["linky_test:peak", "linky_test:offpeak"], "max_power": 12},
         {"source_price_1": 0.1807, "source_price_2": 0.1387},
         {"subscription": 19.37},
@@ -38,14 +38,14 @@ VARIANTS = {
     ],
     # A sensor that only gives yesterday's consumption.
     "daily": [
-        {"name": "Wattcast Veille", "source_mode": "daily_value", "price_mode": "fixed", "subscription_mode": "none"},
+        {"name": "Wattendix Veille", "source_mode": "daily_value", "price_mode": "fixed", "subscription_mode": "none"},
         {"source": ["sensor.dev_last_reading"], "max_power": 12},
         {"price": 0.17},
         {},
     ],
     # Several live sensors added together, one of them a power sensor.
     "multi": [
-        {"name": "Wattcast Multi", "source_mode": "live", "price_mode": "none", "subscription_mode": "none"},
+        {"name": "Wattendix Multi", "source_mode": "live", "price_mode": "none", "subscription_mode": "none"},
         {"source": ["sensor.dev_home_energy", "sensor.dev_extra_power"], "max_power": 36},
         {},
     ],
@@ -58,7 +58,7 @@ VARIANTS = {
 
 def run(variant: str) -> None:
     access = ha.token()
-    step = ha.http("/api/config/config_entries/flow", {"handler": "wattcast", "show_advanced_options": False}, access)
+    step = ha.http("/api/config/config_entries/flow", {"handler": "wattendix", "show_advanced_options": False}, access)
     for answers in VARIANTS[variant]:
         print("step", step.get("step_id"), "fields", [f["name"] for f in step.get("data_schema", [])])
         step = ha.http(f"/api/config/config_entries/flow/{step['flow_id']}", answers, access)

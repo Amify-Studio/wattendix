@@ -1,4 +1,4 @@
-"""Wattcast sensors: only those the configuration can feed are created."""
+"""Wattendix sensors: only those the configuration can feed are created."""
 
 from __future__ import annotations
 
@@ -18,9 +18,9 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceEntryType, DeviceInfo
 from homeassistant.helpers.entity_platform import AddConfigEntryEntitiesCallback
 
-from . import WattcastConfigEntry
+from . import WattendixConfigEntry
 from .const import DOMAIN, MODE_PER_SOURCE, VERSION
-from .controller import WattcastController
+from .controller import WattendixController
 from .core.periods import PERIODS
 
 Snapshot = dict[str, Any]
@@ -29,11 +29,11 @@ HDD_UNIT = "°C·d"
 
 
 @dataclass(frozen=True, kw_only=True)
-class WattcastSensorDescription(SensorEntityDescription):
+class WattendixSensorDescription(SensorEntityDescription):
     """A sensor reading the controller snapshot."""
 
     value_fn: Callable[[Snapshot], Any]
-    attrs_fn: Callable[[Snapshot, WattcastController], dict[str, Any]] | None = None
+    attrs_fn: Callable[[Snapshot, WattendixController], dict[str, Any]] | None = None
     reset_fn: Callable[[Snapshot], str | None] | None = None
     digits: int = 2
 
@@ -42,8 +42,8 @@ def _r(value: Any, digits: int = 2) -> Any:
     return round(value, digits) if isinstance(value, (int, float)) else value
 
 
-def _period_attrs(period: str, q: str) -> Callable[[Snapshot, WattcastController], dict[str, Any]]:
-    def attrs(snap: Snapshot, controller: WattcastController) -> dict[str, Any]:
+def _period_attrs(period: str, q: str) -> Callable[[Snapshot, WattendixController], dict[str, Any]]:
+    def attrs(snap: Snapshot, controller: WattendixController) -> dict[str, Any]:
         block = snap["periods"][period]
         out = {
             "estimate": _r(block.get(f"{q}_estimate")),
@@ -68,7 +68,7 @@ def _period_attrs(period: str, q: str) -> Callable[[Snapshot, WattcastController
     return attrs
 
 
-def _method_attrs(snap: Snapshot, controller: WattcastController) -> dict[str, Any]:
+def _method_attrs(snap: Snapshot, controller: WattendixController) -> dict[str, Any]:
     model = controller.engine.d.get("model") or {}
     return {
         "reason": snap["reason"],
@@ -85,8 +85,8 @@ def _method_attrs(snap: Snapshot, controller: WattcastController) -> dict[str, A
     }
 
 
-def _heating_attrs(period: str) -> Callable[[Snapshot, WattcastController], dict[str, Any]]:
-    def attrs(snap: Snapshot, controller: WattcastController) -> dict[str, Any]:
+def _heating_attrs(period: str) -> Callable[[Snapshot, WattendixController], dict[str, Any]]:
+    def attrs(snap: Snapshot, controller: WattendixController) -> dict[str, Any]:
         block = snap["heating"].get(period) or {}
         fit = snap["heating"].get("fit") or {}
         return {
@@ -105,14 +105,14 @@ def _heating_attrs(period: str) -> Callable[[Snapshot, WattcastController], dict
     return attrs
 
 
-def _descriptions(controller: WattcastController) -> list[WattcastSensorDescription]:
-    out: list[WattcastSensorDescription] = []
+def _descriptions(controller: WattendixController) -> list[WattendixSensorDescription]:
+    out: list[WattendixSensorDescription] = []
     for period in PERIODS:
         if controller.delayed and period == "hour":
             continue  # a delayed source has one total per day
         start = lambda s, p=period: s["periods"][p]["start"]  # noqa: E731
         out.append(
-            WattcastSensorDescription(
+            WattendixSensorDescription(
                 key=f"energy_{period}",
                 device_class=SensorDeviceClass.ENERGY,
                 state_class=SensorStateClass.TOTAL,
@@ -126,7 +126,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
         estimated = not (controller.delayed and period == "day")
         if estimated:
             out.append(
-                WattcastSensorDescription(
+                WattendixSensorDescription(
                     key=f"energy_{period}_estimate",
                 state_class=SensorStateClass.MEASUREMENT,
                 native_unit_of_measurement=UnitOfEnergy.KILO_WATT_HOUR,
@@ -137,7 +137,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
         if not controller.priced:
             continue
         out.append(
-            WattcastSensorDescription(
+            WattendixSensorDescription(
                 key=f"cost_{period}",
                 device_class=SensorDeviceClass.MONETARY,
                 state_class=SensorStateClass.TOTAL,
@@ -149,7 +149,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
         )
         if estimated:
           out.append(
-            WattcastSensorDescription(
+            WattendixSensorDescription(
                 key=f"cost_{period}_estimate",
                 state_class=SensorStateClass.MEASUREMENT,
                 native_unit_of_measurement=CURRENCY,
@@ -161,7 +161,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
     # With one price per sensor there is no single current price to show.
     if controller.priced and controller.price_mode != MODE_PER_SOURCE:
         out.append(
-            WattcastSensorDescription(
+            WattendixSensorDescription(
                 key="price",
                 state_class=SensorStateClass.MEASUREMENT,
                 native_unit_of_measurement=f"{CURRENCY}/kWh",
@@ -178,7 +178,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
         )
     if controller.has_subscription:
         out.append(
-            WattcastSensorDescription(
+            WattendixSensorDescription(
                 key="subscription",
                 native_unit_of_measurement=CURRENCY,
                 icon="mdi:file-certificate-outline",
@@ -190,7 +190,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
             )
         )
     out.append(
-        WattcastSensorDescription(
+        WattendixSensorDescription(
             key="method",
             device_class=SensorDeviceClass.ENUM,
             options=["model", "average", "pace"],
@@ -201,7 +201,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
         )
     )
     out.append(
-        WattcastSensorDescription(
+        WattendixSensorDescription(
             key="rejected_jumps",
             entity_category=EntityCategory.DIAGNOSTIC,
             state_class=SensorStateClass.TOTAL_INCREASING,
@@ -218,7 +218,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
     if controller.has_heating:
         for period in ("day", "month", "season"):
             out.append(
-                WattcastSensorDescription(
+                WattendixSensorDescription(
                     key=f"degree_days_{period}",
                     state_class=SensorStateClass.MEASUREMENT,
                     native_unit_of_measurement=HDD_UNIT,
@@ -228,7 +228,7 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
             )
         for period in ("month", "season"):
             out.append(
-                WattcastSensorDescription(
+                WattendixSensorDescription(
                     key=f"heating_{period}",
                     device_class=SensorDeviceClass.ENERGY,
                     state_class=SensorStateClass.TOTAL,
@@ -244,25 +244,25 @@ def _descriptions(controller: WattcastController) -> list[WattcastSensorDescript
 
 async def async_setup_entry(
     hass: HomeAssistant,
-    entry: WattcastConfigEntry,
+    entry: WattendixConfigEntry,
     async_add_entities: AddConfigEntryEntitiesCallback,
 ) -> None:
     """Create the sensors of this meter."""
     controller = entry.runtime_data
     async_add_entities(
-        WattcastSensor(controller, description) for description in _descriptions(controller)
+        WattendixSensor(controller, description) for description in _descriptions(controller)
     )
 
 
-class WattcastSensor(SensorEntity):
+class WattendixSensor(SensorEntity):
     """One value of the controller snapshot."""
 
-    entity_description: WattcastSensorDescription
+    entity_description: WattendixSensorDescription
     _attr_has_entity_name = True
     _attr_should_poll = False
 
     def __init__(
-        self, controller: WattcastController, description: WattcastSensorDescription
+        self, controller: WattendixController, description: WattendixSensorDescription
     ) -> None:
         self.controller = controller
         self.entity_description = description

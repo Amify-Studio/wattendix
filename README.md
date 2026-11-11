@@ -1,19 +1,19 @@
-# Wattcast
+# Wattendix
 
 **Votre facture d'électricité en direct, et là où elle va finir.**
 *Your electricity bill, live — and where it is heading.* ([English below](#english))
 
-<img src="docs/images/card-charts.fr.png" width="620" alt="La carte Wattcast : tuiles et courbes par période">
+<img src="docs/images/card-charts.fr.png" width="620" alt="La carte Wattendix : tuiles et courbes par période">
 
 **[Guide de démarrage](docs/demarrage.md)** · **[Getting started](docs/getting-started.md)**
 
-Wattcast est une intégration Home Assistant, livrée avec sa carte Lovelace. À partir d'un seul capteur de consommation, elle suit ce que le logement a consommé cette heure, aujourd'hui, cette semaine, ce mois et cette année, et **estime le total de chaque période avant qu'elle soit finie** — en kWh, et en euros dès qu'un prix est renseigné.
+Wattendix est une intégration Home Assistant, livrée avec sa carte Lovelace. À partir d'un seul capteur de consommation, elle suit ce que le logement a consommé cette heure, aujourd'hui, cette semaine, ce mois et cette année, et **estime le total de chaque période avant qu'elle soit finie** — en kWh, et en euros dès qu'un prix est renseigné.
 
 ## Ce qu'elle fait
 
 - **Compteurs par période** : heure, jour, semaine, mois, année, avec la période précédente et la moyenne des dernières périodes.
 - **Estimation de fin de période** = déjà consommé + attendu d'ici la fin (+ abonnement de la période entière pour les coûts).
-- **Modèle météo appris tout seul** : avec une température extérieure, Wattcast lit l'historique du recorder et apprend combien le logement consomme selon la température du jour (table par tranches de 2 °C), et à quelles heures. Aucun réglage, aucune constante propre à un logement.
+- **Modèle météo appris tout seul** : avec une température extérieure, Wattendix lit l'historique du recorder et apprend combien le logement consomme selon la température du jour (table par tranches de 2 °C), et à quelles heures. Aucun réglage, aucune constante propre à un logement.
 - **Prix** : tarif fixe, heures pleines / heures creuses avec plages réglables, ou une entité de prix existante. Le prix est appliqué au moment de la consommation : un changement de tarif ne recalcule jamais le passé.
 - **Abonnement** réparti au prorata des jours du mois, avec mémoire de la dernière valeur connue si l'entité source disparaît.
 - **Tendance** en % par rapport à la période précédente, calculée sur l'énergie seule (l'abonnement ne la dilue pas).
@@ -37,15 +37,20 @@ Données inventées. Les écrans de réglage sont dans le [guide de démarrage](
 
 ## Installation
 
-### Avec HACS
+### Avec le Marketplace (Home Assistant 2026.11 et plus)
 
-1. HACS → menu ⋮ → *Dépôts personnalisés* → ajoutez `https://github.com/Amify-Studio/wattcast`, type *Intégration*.
-2. Installez **Wattcast**, puis redémarrez Home Assistant.
-3. *Paramètres → Appareils et services → Ajouter une intégration → Wattcast*.
+1. *Paramètres → Marketplace → Ajouter grâce à un lien* → collez `https://github.com/Amify-Studio/wattendix`. Home Assistant demande de connecter un compte GitHub la première fois.
+2. Ouvrez **Wattendix** → *Installer*. L'assistant de configuration s'ouvre aussitôt, sans redémarrage.
+
+### Avec HACS (Home Assistant 2026.10)
+
+1. HACS → menu ⋮ → *Dépôts personnalisés* → ajoutez `https://github.com/Amify-Studio/wattendix`, type *Intégration*.
+2. Installez **Wattendix**, puis redémarrez Home Assistant.
+3. *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
 
 ### À la main
 
-Copiez `custom_components/wattcast` dans le dossier `custom_components` de votre configuration, puis redémarrez.
+Copiez `custom_components/wattendix` dans le dossier `custom_components` de votre configuration, puis redémarrez.
 
 La carte est servie par l'intégration : rien à ajouter dans les ressources Lovelace.
 
@@ -69,16 +74,16 @@ Le premier écran demande comment la mesure arrive dans Home Assistant :
 - **En différé, statistiques importées** — les données du distributeur ou du fournisseur (Linky par Enedis, etc.), qui arrivent le lendemain sous forme de statistiques long terme. On choisit les statistiques directement, même sans entité.
 - **En différé, relevé de la veille** — un capteur dont l'état est la consommation du jour précédent.
 
-En différé, il n'y a qu'un total par jour : Wattcast suit le dernier jour reçu, la semaine, le mois et l'année, sans période « heure ». Les jours pas encore reçus (aujourd'hui compris) font partie de l'estimation. Les plages horaires HP/HC ne peuvent pas s'appliquer à un total journalier : utilisez un tarif fixe, ou **un prix par capteur** quand heures pleines et heures creuses ont chacune leur capteur ou leur statistique.
+En différé, il n'y a qu'un total par jour : Wattendix suit le dernier jour reçu, la semaine, le mois et l'année, sans période « heure ». Les jours pas encore reçus (aujourd'hui compris) font partie de l'estimation. Les plages horaires HP/HC ne peuvent pas s'appliquer à un total journalier : utilisez un tarif fixe, ou **un prix par capteur** quand heures pleines et heures creuses ont chacune leur capteur ou leur statistique.
 
 Avec du solaire, choisissez le compteur d'import réseau.
 
-Pour la météo, l'idéal est de donner **les deux** : le thermomètre a un historique dans le recorder (apprentissage immédiat sur plus d'un an), l'entité météo fournit les prévisions des jours suivants. Avec l'entité météo seule, Wattcast apprend au fil des jours à partir de l'installation.
+Pour la météo, l'idéal est de donner **les deux** : le thermomètre a un historique dans le recorder (apprentissage immédiat sur plus d'un an), l'entité météo fournit les prévisions des jours suivants. Avec l'entité météo seule, Wattendix apprend au fil des jours à partir de l'installation.
 
 ## La carte
 
 ```yaml
-type: custom:wattcast-card
+type: custom:wattendix-card
 periods: [day, week, month, year]   # hour, day, week, month, year
 display: auto                       # auto | cost | energy
 layout: tiles                       # tiles | table (tableau résumé) | mini (tableau nu, très compact)
@@ -112,7 +117,7 @@ Par période : `Consommation …`, `Consommation estimée …`, et avec un prix 
 
 ## Bon à savoir
 
-- **Au premier démarrage**, Wattcast reprend l'historique du recorder pour remplir les périodes en cours et précédentes. Les coûts de cet historique sont estimés au tarif d'aujourd'hui ; à partir de l'installation, ils sont comptés au prix du moment.
+- **Au premier démarrage**, Wattendix reprend l'historique du recorder pour remplir les périodes en cours et précédentes. Les coûts de cet historique sont estimés au tarif d'aujourd'hui ; à partir de l'installation, ils sont comptés au prix du moment.
 - **Sauts de compteur** : un saut qui dépasserait la *puissance maximale plausible* sur le temps écoulé est rejeté et compté dans le capteur de diagnostic. Réglez cette puissance un peu au-dessus de celle de votre abonnement.
 - **Pas dans cette version** : production solaire, tarifs dynamiques heure par heure, comparaison annuelle des coûts.
 
@@ -120,20 +125,20 @@ Par période : `Consommation …`, `Consommation estimée …`, et avec un prix 
 
 ## English
 
-Wattcast is a Home Assistant integration shipped with its Lovelace card. From a single consumption sensor it tracks what the home used this hour, today, this week, this month and this year, and **estimates each period's total before it ends** — in kWh, and in money once a price is given.
+Wattendix is a Home Assistant integration shipped with its Lovelace card. From a single consumption sensor it tracks what the home used this hour, today, this week, this month and this year, and **estimates each period's total before it ends** — in kWh, and in money once a price is given.
 
 - **Only one sensor is required**: the home's total consumption, as an energy counter (Wh, kWh, MWh) or a power sensor (W, kW). Everything else is optional and can be changed later from *Configure*.
 - **Price**: flat rate, peak / off-peak with editable time ranges, or an existing price entity. Prices apply when energy is used; a rate change never recomputes the past.
 - **Standing charge** spread over the days of the month, remembering the last known value.
-- **Self-learned weather model**: with an outdoor temperature, Wattcast learns from the recorder how much the home uses depending on the day's temperature and at which hours. Until 14 days are available it falls back to the average of the last 7 days; the *Estimation method* sensor tells which one is in use.
+- **Self-learned weather model**: with an outdoor temperature, Wattendix learns from the recorder how much the home uses depending on the day's temperature and at which hours. Until 14 days are available it falls back to the average of the last 7 days; the *Estimation method* sensor tells which one is in use.
 - **Heating** (optional): degree-days and heat pump consumption against what the weather calls for.
 - **Guarded counter**: a reset to zero or an absurd jump of the source is not counted.
 
-<img src="docs/images/card-charts.en.png" width="620" alt="The Wattcast card: tiles and one curve per period">
+<img src="docs/images/card-charts.en.png" width="620" alt="The Wattendix card: tiles and one curve per period">
 
 Step by step, with screenshots: **[Getting started](docs/getting-started.md)**.
 
-Install through HACS as a custom repository (`https://github.com/Amify-Studio/wattcast`, type *Integration*), restart, then add the **Wattcast** integration. The card (`custom:wattcast-card`) is served by the integration and has a visual editor.
+Install from *Settings → Marketplace → Add from link* with `https://github.com/Amify-Studio/wattendix` (Home Assistant 2026.11 and newer; the setup wizard opens right after installing). On 2026.10, add it to HACS as a custom repository, type *Integration*, restart, then add the **Wattendix** integration. The card (`custom:wattendix-card`) is served by the integration and has a visual editor.
 
 ## Development
 
@@ -144,4 +149,4 @@ python dev/make_translations.py                 # regenerate strings.json and tr
 python dev/screenshots.py                       # card screenshots of docs/images (invented data, dev/demo)
 ```
 
-Wattcast est édité par Amify-Studio, sous licence MIT. / Wattcast is published by Amify-Studio under the MIT licence.
+Wattendix est édité par Amify-Studio, sous licence MIT. / Wattendix is published by Amify-Studio under the MIT licence.

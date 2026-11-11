@@ -1,4 +1,4 @@
-/* Wattcast card — your electricity bill, live and forecast.
+/* Wattendix card — your electricity bill, live and forecast.
  * Plain custom element: no build step, no dependency. */
 
 const PERIODS = ["hour", "day", "week", "month", "year"];
@@ -27,9 +27,9 @@ const TEXT = {
     peak: "Peak", offpeak: "Off-peak", subscription: "Standing charge", per_month: "/month",
     model: "Weather model", average: "7-day average", pace: "Today's pace",
     learning: "learning", no_temperature: "no temperature", out_of_range: "out of range",
-    missing: "Wattcast is not set up yet. Add the integration first.",
+    missing: "Wattendix is not set up yet. Add the integration first.",
     loading: "Loading…",
-    f_title: "Title", f_entry: "Wattcast meter", f_periods: "Periods", f_display: "Display",
+    f_title: "Title", f_entry: "Wattendix meter", f_periods: "Periods", f_display: "Display",
     f_heating: "Hide heating", f_info: "Hide price, standing charge and method",
     auto: "Automatic", cost: "Cost", energy: "Energy (kWh)",
     last_day: "Reading", received: "Data up to",
@@ -55,9 +55,9 @@ const TEXT = {
     peak: "Heures pleines", offpeak: "Heures creuses", subscription: "Abonnement", per_month: "/mois",
     model: "Modèle météo", average: "Moyenne 7 jours", pace: "Rythme du jour",
     learning: "apprentissage", no_temperature: "pas de température", out_of_range: "hors plage",
-    missing: "Wattcast n'est pas encore configuré. Ajoutez d'abord l'intégration.",
+    missing: "Wattendix n'est pas encore configuré. Ajoutez d'abord l'intégration.",
     loading: "Chargement…",
-    f_title: "Titre", f_entry: "Compteur Wattcast", f_periods: "Périodes", f_display: "Affichage",
+    f_title: "Titre", f_entry: "Compteur Wattendix", f_periods: "Périodes", f_display: "Affichage",
     f_heating: "Masquer le chauffage", f_info: "Masquer prix, abonnement et méthode",
     auto: "Automatique", cost: "Coût", energy: "Énergie (kWh)",
     last_day: "Relevé", received: "Données jusqu'au",
@@ -153,7 +153,7 @@ const STYLE = `
   .unit { font-size: 14px; opacity: .55; margin-left: 3px; font-weight: 400; letter-spacing: 0; }
   .side { font-size: 12px; color: var(--secondary-text-color); white-space: nowrap; }
   .bar { grid-column: 1 / -1; position: relative; height: 6px; border-radius: 3px; background: var(--divider-color); }
-  .fill { height: 100%; border-radius: 3px; background: var(--wattcast-color, var(--primary-color)); max-width: 100%; }
+  .fill { height: 100%; border-radius: 3px; background: var(--wattendix-color, var(--primary-color)); max-width: 100%; }
   .fill.over { background: var(--warning-color, #ffa600); }
   .mark { position: absolute; top: -3px; width: 2px; height: 12px; border-radius: 1px;
     background: var(--secondary-text-color); opacity: .7; }
@@ -211,7 +211,7 @@ const STYLE = `
   }
   .charts { display: grid; gap: 10px; margin-top: 10px;
     grid-template-columns: repeat(auto-fit, minmax(270px, 1fr));
-    --wc-cur: var(--wattcast-color, var(--primary-color)); --wc-est: #ffb300;
+    --wc-cur: var(--wattendix-color, var(--primary-color)); --wc-est: #ffb300;
     --wc-prev: #90a4ae; --wc-avg: #ba68c8; }
   .chart { padding: 10px 12px; border-radius: var(--ha-card-border-radius, 12px); min-width: 0;
     background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }
@@ -246,7 +246,7 @@ const STYLE = `
   }
 `;
 
-class WattcastCard extends HTMLElement {
+class WattendixCard extends HTMLElement {
   constructor() {
     super();
     this.attachShadow({ mode: "open" });
@@ -272,7 +272,7 @@ class WattcastCard extends HTMLElement {
     return {
       schema: [
         { name: "title", selector: { text: {} } },
-        { name: "entry", selector: { config_entry: { integration: "wattcast" } } },
+        { name: "entry", selector: { config_entry: { integration: "wattendix" } } },
         {
           name: "periods",
           selector: { select: { multiple: true, mode: "list",
@@ -338,7 +338,7 @@ class WattcastCard extends HTMLElement {
     this._loading = true;
     this._infoAt = Date.now();
     try {
-      this._info = await this._hass.callWS({ type: "wattcast/info" });
+      this._info = await this._hass.callWS({ type: "wattendix/info" });
     } catch (err) {
       this._info = this._info || { entries: [] };
     }
@@ -639,7 +639,7 @@ class WattcastCard extends HTMLElement {
         // The consumption curve is rebuilt by the integration from the source
         // statistics, so it is complete even right after the installation.
         const curve = await this._hass.callWS({
-          type: "wattcast/curve", entry_id: entry.entry_id, period: w.period,
+          type: "wattendix/curve", entry_id: entry.entry_id, period: w.period,
         });
         const column = kind === "cost" ? 2 : 1;
         series[w.period] = {
@@ -775,14 +775,14 @@ class WattcastCard extends HTMLElement {
   }
 }
 
-if (!customElements.get("wattcast-card")) {
-  customElements.define("wattcast-card", WattcastCard);
+if (!customElements.get("wattendix-card")) {
+  customElements.define("wattendix-card", WattendixCard);
   window.customCards = window.customCards || [];
   window.customCards.push({
-    type: "wattcast-card",
-    name: "Wattcast",
+    type: "wattendix-card",
+    name: "Wattendix",
     description: "Your electricity bill, live and forecast / Votre facture d'électricité en direct",
     preview: false,
-    documentationURL: "https://github.com/Amify-Studio/wattcast",
+    documentationURL: "https://github.com/Amify-Studio/wattendix",
   });
 }

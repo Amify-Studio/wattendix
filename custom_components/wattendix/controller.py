@@ -1,4 +1,4 @@
-"""Glue between Home Assistant and the Wattcast engine."""
+"""Glue between Home Assistant and the Wattendix engine."""
 
 from __future__ import annotations
 
@@ -103,7 +103,7 @@ def _add(total: dict[int, float], part: dict[int, float]) -> None:
         total[key] = total.get(key, 0.0) + value
 
 
-class WattcastController:
+class WattendixController:
     """Owns the engine of one config entry and feeds it."""
 
     def __init__(self, hass: HomeAssistant, entry: ConfigEntry) -> None:
@@ -657,7 +657,7 @@ class WattcastController:
         """Cumulative consumption of the current period, for the card's curve.
 
         Rebuilt from the source statistics, so the curve is complete from the
-        first day, whenever Wattcast was installed. Each point is
+        first day, whenever Wattendix was installed. Each point is
         [epoch ms, kWh, cost with standing charge (None without price)].
         """
         now = dt_util.now()
@@ -735,7 +735,7 @@ class WattcastController:
         try:
             await self._learn()
         except Exception:  # noqa: BLE001 - learning must never break the counters
-            _LOGGER.exception("Wattcast learning failed")
+            _LOGGER.exception("Wattendix learning failed")
         finally:
             self.learning = False
         self._refresh()

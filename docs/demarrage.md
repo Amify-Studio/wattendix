@@ -8,7 +8,7 @@ De l'installation à la première carte, en une dizaine de minutes. Les captures
 
 Il vous faut :
 
-- **Home Assistant 2026.10 ou plus récent**, avec [HACS](https://hacs.xyz) ;
+- **Home Assistant 2026.11 ou plus récent** (en 2026.10, passez par [HACS](https://hacs.xyz)) ;
 - **une mesure de la consommation du logement** déjà présente dans Home Assistant. C'est la seule chose obligatoire. Elle peut venir :
   - d'un appareil en temps réel : pince ampèremétrique, module de tableau, téléinformation du compteur ;
   - des données de votre distributeur ou fournisseur (Linky par Enedis, par exemple), qui arrivent le lendemain.
@@ -17,13 +17,15 @@ Tout le reste (prix, abonnement, météo, chauffage) est facultatif et peut êtr
 
 ## 1. Installer
 
-1. Dans HACS, ouvrez le menu ⋮ puis *Dépôts personnalisés*.
-2. Ajoutez `https://github.com/Amify-Studio/wattcast`, type *Intégration*.
-3. Installez **Wattcast**, puis redémarrez Home Assistant.
+1. Ouvrez *Paramètres → Marketplace*, puis *Ajouter grâce à un lien*.
+2. Collez `https://github.com/Amify-Studio/wattendix` et validez. La première fois, Home Assistant vous demande de connecter un compte GitHub : suivez le lien affiché et saisissez le code.
+3. Ouvrez **Wattendix**, puis *Installer*. Pas besoin de redémarrer : l'assistant de configuration s'ouvre aussitôt.
 
-## 2. Ajouter l'intégration
+En 2026.10, avec HACS : menu ⋮ → *Dépôts personnalisés*, ajoutez la même adresse en type *Intégration*, installez **Wattendix**, redémarrez, puis *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
 
-*Paramètres → Appareils et services → Ajouter une intégration → Wattcast.* L'assistant ne montre que les écrans utiles à vos choix.
+## 2. Configurer l'intégration
+
+L'assistant ne montre que les écrans utiles à vos choix. Pour ajouter un second compteur plus tard : *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
 
 ### Ce que vous avez
 
@@ -37,7 +39,7 @@ Le premier écran pose trois questions : comment arrive la consommation, si vous
 | Données Linky ou fournisseur visibles dans le tableau de bord Énergie | *En différé : statistiques importées* |
 | Un capteur qui donne « la consommation d'hier » | *En différé : capteur donnant la consommation de la veille* |
 
-En différé, Wattcast suit le dernier jour reçu, la semaine, le mois et l'année ; il n'y a pas d'heure en cours ni de plages horaires.
+En différé, Wattendix suit le dernier jour reçu, la semaine, le mois et l'année ; il n'y a pas d'heure en cours ni de plages horaires.
 
 ### La mesure de consommation
 
@@ -65,14 +67,14 @@ Le montant mensuel de votre abonnement, pour que les montants affichés ressembl
 
 Facultatif, mais c'est ce qui rend les estimations bien meilleures dans un logement chauffé à l'électricité. L'idéal est de donner les deux :
 
-- le **thermomètre extérieur** a un historique : Wattcast apprend tout de suite sur ce que Home Assistant a déjà enregistré ;
+- le **thermomètre extérieur** a un historique : Wattendix apprend tout de suite sur ce que Home Assistant a déjà enregistré ;
 - l'**entité météo** fournit les prévisions des jours à venir.
 
 <img src="images/wizard-weather.fr.png" width="440" alt="Entité météo et thermomètre extérieur">
 
 ### Le chauffage
 
-Facultatif. Avec la consommation de votre pompe à chaleur ou de vos radiateurs, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait.
+Facultatif. Avec la consommation de votre pompe à chaleur ou de vos radiateurs, Wattendix la compare à ce qui est attendu pour le froid qu'il a fait.
 
 <img src="images/wizard-heating.fr.png" width="440" alt="Consommation de la pompe à chaleur et degrés-jours">
 
@@ -80,7 +82,7 @@ Tout se modifie ensuite par *Configurer*, sur la page de l'intégration, sans pe
 
 ## 3. Ajouter la carte
 
-Sur un tableau de bord : *Modifier → Ajouter une carte → Wattcast*. Il n'y a rien à ajouter dans les ressources, la carte est fournie par l'intégration. Si elle n'apparaît pas dans la liste, rechargez la page du navigateur.
+Sur un tableau de bord : *Modifier → Ajouter une carte → Wattendix*. Il n'y a rien à ajouter dans les ressources, la carte est fournie par l'intégration. Si elle n'apparaît pas dans la liste, rechargez la page du navigateur.
 
 <img src="images/card-tiles.fr.png" width="760" alt="Carte en tuiles : jour, semaine, mois, année, chauffage">
 
@@ -106,7 +108,7 @@ La carte s'adapte à ce que vous avez configuré :
 
 ## 4. Les premiers jours
 
-- **Les compteurs sont remplis dès l'installation** : Wattcast reprend l'historique de Home Assistant pour les périodes en cours et précédentes. Les coûts de cet historique sont estimés au tarif du jour de l'installation.
+- **Les compteurs sont remplis dès l'installation** : Wattendix reprend l'historique de Home Assistant pour les périodes en cours et précédentes. Les coûts de cet historique sont estimés au tarif du jour de l'installation.
 - **Le modèle météo demande 14 jours d'historique avec température.** D'ici là, l'estimation du jour utilise la moyenne des 7 derniers jours, et la carte l'indique par une pastille orange « apprentissage ». Avec un thermomètre déjà historisé, le modèle est prêt dès le premier démarrage.
 - **Le modèle se réapprend chaque nuit**, sans réglage.
 
@@ -114,10 +116,10 @@ La carte s'adapte à ce que vous avez configuré :
 
 | Ce que vous voyez | Ce qu'il faut regarder |
 | --- | --- |
-| La carte dit que Wattcast n'est pas configuré | L'intégration n'a pas encore été ajoutée (étape 2) |
+| La carte dit que Wattendix n'est pas configuré | L'intégration n'a pas encore été ajoutée (étape 2) |
 | La carte n'est pas dans la liste | Rechargez la page ; videz le cache du navigateur si besoin |
 | Des montants à zéro ou absents | Le capteur de consommation est-il disponible ? A-t-il la bonne unité (Wh, kWh, MWh, W, kW) ? |
 | L'estimation reste sur « Moyenne 7 jours » | Moins de 14 jours d'historique, ou pas de température extérieure |
 | Le capteur *Sauts de compteur rejetés* augmente | La puissance maximale plausible est trop basse, ou le capteur source a des ratés |
 
-Un problème, une idée : [ouvrez un ticket](https://github.com/Amify-Studio/wattcast/issues).
+Un problème, une idée : [ouvrez un ticket](https://github.com/Amify-Studio/wattendix/issues).

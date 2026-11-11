@@ -97,7 +97,7 @@ def _choice(options: list[str], key: str) -> selector.SelectSelector:
     )
 
 
-class WattcastSteps:
+class WattendixSteps:
     """Steps shared by the config flow and the options flow."""
 
     _values: dict[str, Any]
@@ -151,7 +151,7 @@ class WattcastSteps:
                 return await self.async_step_source()
         fields: dict[Any, Any] = {}
         if self._with_name:
-            fields[vol.Required(CONF_NAME, default="Wattcast")] = selector.TextSelector()
+            fields[vol.Required(CONF_NAME, default="Wattendix")] = selector.TextSelector()
         fields.update(
             {
                 vol.Required(CONF_SOURCE_MODE, default=SOURCE_LIVE): _choice(
@@ -352,8 +352,8 @@ class WattcastSteps:
         return self._form("heating", schema, errors, values)
 
 
-class WattcastConfigFlow(WattcastSteps, ConfigFlow, domain=DOMAIN):
-    """Create a Wattcast meter."""
+class WattendixConfigFlow(WattendixSteps, ConfigFlow, domain=DOMAIN):
+    """Create a Wattendix meter."""
 
     VERSION = 1
     _with_name = True
@@ -366,16 +366,16 @@ class WattcastConfigFlow(WattcastSteps, ConfigFlow, domain=DOMAIN):
 
     def _finish(self) -> ConfigFlowResult:
         options = dict(self._values)
-        title = str(options.pop(CONF_NAME, "") or "Wattcast").strip()
+        title = str(options.pop(CONF_NAME, "") or "Wattendix").strip()
         return self.async_create_entry(title=title, data={}, options=options)
 
     @staticmethod
     @callback
-    def async_get_options_flow(config_entry: ConfigEntry) -> WattcastOptionsFlow:
-        return WattcastOptionsFlow(config_entry)
+    def async_get_options_flow(config_entry: ConfigEntry) -> WattendixOptionsFlow:
+        return WattendixOptionsFlow(config_entry)
 
 
-class WattcastOptionsFlow(WattcastSteps, OptionsFlowWithReload):
+class WattendixOptionsFlow(WattendixSteps, OptionsFlowWithReload):
     """Change any level afterwards; the counters are kept."""
 
     def __init__(self, config_entry: ConfigEntry) -> None:

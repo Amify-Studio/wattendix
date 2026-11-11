@@ -1,10 +1,10 @@
-"""Draw the Wattcast brand images (run from the repository root).
+"""Draw the Wattendix brand images (run from the repository root).
 
 Icon: a lightning bolt (the watts) and a dotted line rising to a target (the
 forecast), on a solid tile so it reads on light and dark themes alike.
 Logo: the icon, the name, and "par Amify-Studio" with the studio's mark.
 
-    python dev/make_icon.py            write custom_components/wattcast/brand/*.png
+    python dev/make_icon.py            write custom_components/wattendix/brand/*.png
     python dev/make_icon.py --preview  also write dev/icon_preview.png (not committed)
 """
 
@@ -80,7 +80,7 @@ def logo(dark: bool, height: int) -> Image.Image:
     tile = int(208 * k)
     canvas.alpha_composite(icon().resize((tile, tile), Image.LANCZOS), (int(24 * k), (height - tile) // 2))
     x = int(24 * k) + tile + int(40 * k)
-    d.text((x, int(28 * k)), "Wattcast", font=name_font, fill=text)
+    d.text((x, int(28 * k)), "Wattendix", font=name_font, fill=text)
     by_y = int(170 * k)
     d.text((x + int(4 * k), by_y), "par", font=by_font, fill=soft)
     mark_size = int(46 * k)
@@ -111,7 +111,7 @@ def preview(out: pathlib.Path) -> None:
 
 
 def main() -> None:
-    out = pathlib.Path("custom_components/wattcast/brand")
+    out = pathlib.Path("custom_components/wattendix/brand")
     out.mkdir(exist_ok=True)
     square = icon(with_mark="--mark" in sys.argv)
     for name, size in (("icon.png", 256), ("icon@2x.png", 512)):

@@ -1,14 +1,14 @@
 {
-  "domain": "wattcast",
-  "name": "Wattcast",
+  "domain": "wattendix",
+  "name": "Wattendix",
   "after_dependencies": ["frontend", "recorder", "weather"],
   "codeowners": ["@Amify-Studio"],
   "config_flow": true,
   "dependencies": ["http", "websocket_api"],
-  "documentation": "https://github.com/Amify-Studio/wattcast",
+  "documentation": "https://github.com/Amify-Studio/wattendix",
   "integration_type": "service",
   "iot_class": "calculated",
-  "issue_tracker": "https://github.com/Amify-Studio/wattcast/issues",
+  "issue_tracker": "https://github.com/Amify-Studio/wattendix/issues",
   "requirements": [],
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

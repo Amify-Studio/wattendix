@@ -1,4 +1,4 @@
-# Development Home Assistant for Wattcast.
+# Development Home Assistant for Wattendix.
 # The dev_* sensors are pushed through the REST API by dev/mirror.py.
 default_config:
 
@@ -12,7 +12,7 @@ homeassistant:
 logger:
   default: warning
   logs:
-    custom_components.wattcast: debug
+    custom_components.wattendix: debug
 
 input_number:
   dev_price:
