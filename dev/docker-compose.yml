@@ -1,0 +1,16 @@
+# Local test Home Assistant with the integration mounted read-only.
+#   docker compose -f dev/docker-compose.yml up -d
+#   then open http://localhost:18124
+name: wattcast-dev
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.11.0
+    container_name: wattcast-dev
+    ports:
+      - "18124:8123"
+    volumes:
+      - ./config:/config
+      - ../custom_components/wattcast:/config/custom_components/wattcast:ro
+    environment:
+      TZ: Europe/Paris
+    restart: "no"

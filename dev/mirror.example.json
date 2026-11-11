@@ -1,0 +1,7 @@
+{
+  "env_file": "path/to/.env with HA_URL and HA_TOKEN of the real instance (read only)",
+  "energy": {"sensor.dev_home_energy": "sensor.real_home_energy_total"},
+  "heat_pump": {"sensor.dev_heat_pump_energy": "sensor.real_heat_pump_energy_total"},
+  "temperature": {"sensor.dev_outdoor_temperature": "sensor.real_outdoor_temperature"},
+  "weather": "weather.real_forecast"
+}

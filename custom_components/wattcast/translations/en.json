@@ -1,0 +1,309 @@
+{
+  "config": {
+    "step": {
+      "meter": {
+        "title": "Wattcast",
+        "description": "Only the home's consumption is required; everything else is optional and can be changed later. Start by telling how this measurement reaches Home Assistant.",
+        "data": {
+          "name": "Name",
+          "source_mode": "How consumption arrives",
+          "price_mode": "Electricity price",
+          "subscription_mode": "Standing charge"
+        },
+        "data_description": {
+          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattcast then tracks day, week, month and year, without the current hour.",
+          "price_mode": "Without a price, everything is tracked in kWh. \"One price per sensor\" fits when peak and off-peak each have their own sensor.",
+          "subscription_mode": "Ignored without a price. Spread over the days of the month."
+        }
+      },
+      "source": {
+        "title": "Consumption measurement",
+        "description": "Pick what measures the home's consumption. Several items are added together: peak index + off-peak index, three phases, several meters. Live: energy counters (Wh, kWh, MWh) or power sensors (W, kW); a counter is more reliable, it catches up what was used while Home Assistant was stopped. With solar, pick the grid import counter.",
+        "data": {
+          "source": "Home consumption",
+          "max_power": "Highest plausible power"
+        },
+        "data_description": {
+          "source": "Sensors, or statistics if you chose imported statistics.",
+          "max_power": "A little above your contract's power. A counter jump that would exceed it over the elapsed time is rejected (counter reset, absurd value)."
+        }
+      },
+      "price": {
+        "title": "Electricity price",
+        "description": "The price is applied to energy when it is counted: changing rates never recomputes the past.\n\n{sources}",
+        "data": {
+          "price": "Price per kWh",
+          "price_peak": "Peak price",
+          "price_offpeak": "Off-peak price",
+          "offpeak_ranges": "Off-peak time ranges",
+          "price_entity": "Entity giving the price per kWh",
+          "source_price_1": "Price per kWh, sensor no. 1",
+          "source_price_2": "Price per kWh, sensor no. 2",
+          "source_price_3": "Price per kWh, sensor no. 3",
+          "source_price_4": "Price per kWh, sensor no. 4",
+          "source_price_5": "Price per kWh, sensor no. 5",
+          "source_price_6": "Price per kWh, sensor no. 6"
+        },
+        "data_description": {
+          "offpeak_ranges": "One or more ranges separated by commas, for example 23:10-07:11 or 01:00-07:00, 12:30-14:30.",
+          "price_entity": "Its state must be the current price of one kWh. The last known value is kept while it is unavailable."
+        }
+      },
+      "subscription": {
+        "title": "Standing charge",
+        "data": {
+          "subscription": "Monthly amount",
+          "subscription_entity": "Entity giving the monthly amount"
+        },
+        "data_description": {
+          "subscription_entity": "The last known value is kept while the entity is unavailable."
+        }
+      },
+      "weather": {
+        "title": "Weather",
+        "description": "Optional. With an outdoor temperature, Wattcast learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
+        "data": {
+          "weather": "Weather entity (forecasts)",
+          "outdoor_sensor": "Outdoor thermometer"
+        }
+      },
+      "heating": {
+        "title": "Heating",
+        "description": "Optional. With the heat pump's consumption, Wattcast compares it to what is expected for how cold it has been (degree-days).",
+        "data": {
+          "heat_pump": "Heat pump consumption",
+          "hdd_base": "Degree-day base",
+          "season_month": "First month of the heating season"
+        },
+        "data_description": {
+          "heat_pump": "Energy counters or power sensors, added together (several heaters or units). Leave empty to skip.",
+          "hdd_base": "Outdoor temperature below which the home starts heating.",
+          "season_month": "1 = January … 12 = December."
+        }
+      }
+    },
+    "error": {
+      "bad_unit": "Unsupported unit: Wh, kWh, MWh, W or kW is required.",
+      "bad_daily_unit": "A daily reading must be an energy: Wh, kWh or MWh.",
+      "bad_statistic": "Unusable statistic: a cumulative energy in Wh, kWh or MWh is required.",
+      "no_source": "Pick at least one item.",
+      "too_many_sources": "One price per sensor is limited to 6 sensors.",
+      "delayed_price": "Delayed data only gives one total per day: time ranges cannot apply. Use a flat rate, or one price per sensor if peak and off-peak are separate.",
+      "bad_ranges": "Invalid ranges. Example: 23:10-07:11, 12:30-14:30"
+    }
+  },
+  "options": {
+    "step": {
+      "meter": {
+        "title": "Wattcast",
+        "description": "Only the home's consumption is required; everything else is optional and can be changed later. Start by telling how this measurement reaches Home Assistant.",
+        "data": {
+          "name": "Name",
+          "source_mode": "How consumption arrives",
+          "price_mode": "Electricity price",
+          "subscription_mode": "Standing charge"
+        },
+        "data_description": {
+          "source_mode": "Live: a clamp, a panel module, the meter's local port. Delayed: data from the grid operator or your supplier, arriving the next day; Wattcast then tracks day, week, month and year, without the current hour.",
+          "price_mode": "Without a price, everything is tracked in kWh. \"One price per sensor\" fits when peak and off-peak each have their own sensor.",
+          "subscription_mode": "Ignored without a price. Spread over the days of the month."
+        }
+      },
+      "source": {
+        "title": "Consumption measurement",
+        "description": "Pick what measures the home's consumption. Several items are added together: peak index + off-peak index, three phases, several meters. Live: energy counters (Wh, kWh, MWh) or power sensors (W, kW); a counter is more reliable, it catches up what was used while Home Assistant was stopped. With solar, pick the grid import counter.",
+        "data": {
+          "source": "Home consumption",
+          "max_power": "Highest plausible power"
+        },
+        "data_description": {
+          "source": "Sensors, or statistics if you chose imported statistics.",
+          "max_power": "A little above your contract's power. A counter jump that would exceed it over the elapsed time is rejected (counter reset, absurd value)."
+        }
+      },
+      "price": {
+        "title": "Electricity price",
+        "description": "The price is applied to energy when it is counted: changing rates never recomputes the past.\n\n{sources}",
+        "data": {
+          "price": "Price per kWh",
+          "price_peak": "Peak price",
+          "price_offpeak": "Off-peak price",
+          "offpeak_ranges": "Off-peak time ranges",
+          "price_entity": "Entity giving the price per kWh",
+          "source_price_1": "Price per kWh, sensor no. 1",
+          "source_price_2": "Price per kWh, sensor no. 2",
+          "source_price_3": "Price per kWh, sensor no. 3",
+          "source_price_4": "Price per kWh, sensor no. 4",
+          "source_price_5": "Price per kWh, sensor no. 5",
+          "source_price_6": "Price per kWh, sensor no. 6"
+        },
+        "data_description": {
+          "offpeak_ranges": "One or more ranges separated by commas, for example 23:10-07:11 or 01:00-07:00, 12:30-14:30.",
+          "price_entity": "Its state must be the current price of one kWh. The last known value is kept while it is unavailable."
+        }
+      },
+      "subscription": {
+        "title": "Standing charge",
+        "data": {
+          "subscription": "Monthly amount",
+          "subscription_entity": "Entity giving the monthly amount"
+        },
+        "data_description": {
+          "subscription_entity": "The last known value is kept while the entity is unavailable."
+        }
+      },
+      "weather": {
+        "title": "Weather",
+        "description": "Optional. With an outdoor temperature, Wattcast learns how much the home uses depending on the weather and sharpens its estimates. Best is to give both: the thermometer to learn from history, the weather entity for forecasts.",
+        "data": {
+          "weather": "Weather entity (forecasts)",
+          "outdoor_sensor": "Outdoor thermometer"
+        }
+      },
+      "heating": {
+        "title": "Heating",
+        "description": "Optional. With the heat pump's consumption, Wattcast compares it to what is expected for how cold it has been (degree-days).",
+        "data": {
+          "heat_pump": "Heat pump consumption",
+          "hdd_base": "Degree-day base",
+          "season_month": "First month of the heating season"
+        },
+        "data_description": {
+          "heat_pump": "Energy counters or power sensors, added together (several heaters or units). Leave empty to skip.",
+          "hdd_base": "Outdoor temperature below which the home starts heating.",
+          "season_month": "1 = January … 12 = December."
+        }
+      }
+    },
+    "error": {
+      "bad_unit": "Unsupported unit: Wh, kWh, MWh, W or kW is required.",
+      "bad_daily_unit": "A daily reading must be an energy: Wh, kWh or MWh.",
+      "bad_statistic": "Unusable statistic: a cumulative energy in Wh, kWh or MWh is required.",
+      "no_source": "Pick at least one item.",
+      "too_many_sources": "One price per sensor is limited to 6 sensors.",
+      "delayed_price": "Delayed data only gives one total per day: time ranges cannot apply. Use a flat rate, or one price per sensor if peak and off-peak are separate.",
+      "bad_ranges": "Invalid ranges. Example: 23:10-07:11, 12:30-14:30"
+    }
+  },
+  "selector": {
+    "price_mode": {
+      "options": {
+        "none": "None (kWh only)",
+        "fixed": "Flat rate",
+        "peak_offpeak": "Peak / off-peak hours (time ranges)",
+        "per_source": "One price per sensor (separate peak and off-peak)",
+        "entity": "Existing price entity"
+      }
+    },
+    "source_mode": {
+      "options": {
+        "live": "Live (clamp, module, meter port)",
+        "statistics": "Delayed: imported statistics (grid operator, supplier)",
+        "daily_value": "Delayed: sensor giving yesterday's consumption"
+      }
+    },
+    "subscription_mode": {
+      "options": {
+        "none": "None",
+        "fixed": "Fixed monthly amount",
+        "entity": "Existing entity"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "energy_hour": {
+        "name": "Energy this hour"
+      },
+      "energy_hour_estimate": {
+        "name": "Estimated energy this hour"
+      },
+      "cost_hour": {
+        "name": "Cost this hour"
+      },
+      "cost_hour_estimate": {
+        "name": "Estimated cost this hour"
+      },
+      "energy_day": {
+        "name": "Energy today"
+      },
+      "energy_day_estimate": {
+        "name": "Estimated energy today"
+      },
+      "cost_day": {
+        "name": "Cost today"
+      },
+      "cost_day_estimate": {
+        "name": "Estimated cost today"
+      },
+      "energy_week": {
+        "name": "Energy this week"
+      },
+      "energy_week_estimate": {
+        "name": "Estimated energy this week"
+      },
+      "cost_week": {
+        "name": "Cost this week"
+      },
+      "cost_week_estimate": {
+        "name": "Estimated cost this week"
+      },
+      "energy_month": {
+        "name": "Energy this month"
+      },
+      "energy_month_estimate": {
+        "name": "Estimated energy this month"
+      },
+      "cost_month": {
+        "name": "Cost this month"
+      },
+      "cost_month_estimate": {
+        "name": "Estimated cost this month"
+      },
+      "energy_year": {
+        "name": "Energy this year"
+      },
+      "energy_year_estimate": {
+        "name": "Estimated energy this year"
+      },
+      "cost_year": {
+        "name": "Cost this year"
+      },
+      "cost_year_estimate": {
+        "name": "Estimated cost this year"
+      },
+      "price": {
+        "name": "Price per kWh"
+      },
+      "subscription": {
+        "name": "Monthly standing charge"
+      },
+      "method": {
+        "name": "Estimation method",
+        "state": {
+          "model": "Weather model",
+          "average": "Last 7 days average",
+          "pace": "Today's pace"
+        }
+      },
+      "rejected_jumps": {
+        "name": "Rejected counter jumps"
+      },
+      "degree_days_day": {
+        "name": "Degree-days today"
+      },
+      "degree_days_month": {
+        "name": "Degree-days this month"
+      },
+      "degree_days_season": {
+        "name": "Degree-days this season"
+      },
+      "heating_month": {
+        "name": "Heating this month"
+      },
+      "heating_season": {
+        "name": "Heating this season"
+      }
+    }
+  }
+}

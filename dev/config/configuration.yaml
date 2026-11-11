@@ -1,0 +1,42 @@
+# Development Home Assistant for Wattcast.
+# The dev_* sensors are pushed through the REST API by dev/mirror.py.
+default_config:
+
+homeassistant:
+  time_zone: Europe/Paris
+  currency: EUR
+  country: FR
+  language: fr
+  unit_system: metric
+
+logger:
+  default: warning
+  logs:
+    custom_components.wattcast: debug
+
+input_number:
+  dev_price:
+    name: Dev price per kWh
+    min: 0
+    max: 1
+    step: 0.0001
+    initial: 0.1807
+    unit_of_measurement: "EUR/kWh"
+  dev_subscription:
+    name: Dev monthly standing charge
+    min: 0
+    max: 100
+    step: 0.01
+    initial: 19.37
+    unit_of_measurement: "EUR"
+
+# Forecast pushed into sensor.dev_forecast (attribute "forecast") by dev/mirror.py.
+template:
+  - weather:
+      - name: Dev weather
+        unique_id: dev_weather
+        condition_template: "cloudy"
+        temperature_template: "{{ state_attr('sensor.dev_forecast', 'temperature') | float(10) }}"
+        humidity_template: "{{ 60 }}"
+        temperature_unit: "°C"
+        forecast_daily_template: "{{ state_attr('sensor.dev_forecast', 'forecast') or [] }}"

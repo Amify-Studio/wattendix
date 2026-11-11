@@ -1,0 +1,309 @@
+{
+  "config": {
+    "step": {
+      "meter": {
+        "title": "Wattcast",
+        "description": "Seule la mesure de consommation du logement est nécessaire ; tout le reste est facultatif et se modifie ensuite. Commencez par dire comment cette mesure arrive dans Home Assistant.",
+        "data": {
+          "name": "Nom",
+          "source_mode": "Comment arrive la consommation",
+          "price_mode": "Prix de l'électricité",
+          "subscription_mode": "Abonnement"
+        },
+        "data_description": {
+          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattcast suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
+          "price_mode": "Sans prix, tout est suivi en kWh. « Un prix par capteur » convient quand heures pleines et heures creuses ont chacune leur capteur.",
+          "subscription_mode": "Ignoré sans prix. Réparti au prorata des jours du mois."
+        }
+      },
+      "source": {
+        "title": "Mesure de consommation",
+        "description": "Choisissez ce qui mesure la consommation du logement. Plusieurs éléments sont additionnés : index heures pleines + index heures creuses, trois phases, plusieurs compteurs. En temps réel : compteurs d'énergie (Wh, kWh, MWh) ou puissances (W, kW) ; un compteur est plus fiable, il rattrape ce qui a été consommé pendant un arrêt de Home Assistant. Avec du solaire, choisissez le compteur d'import réseau.",
+        "data": {
+          "source": "Consommation du logement",
+          "max_power": "Puissance maximale plausible"
+        },
+        "data_description": {
+          "source": "Capteurs, ou statistiques si vous avez choisi les statistiques importées.",
+          "max_power": "Un peu au-dessus de la puissance de votre abonnement. Un saut du compteur qui la dépasserait sur le temps écoulé est rejeté (compteur remis à zéro, valeur aberrante)."
+        }
+      },
+      "price": {
+        "title": "Prix de l'électricité",
+        "description": "Le prix est appliqué à l'énergie au moment où elle est comptée : changer de tarif ne recalcule pas le passé.\n\n{sources}",
+        "data": {
+          "price": "Prix du kWh",
+          "price_peak": "Prix heures pleines",
+          "price_offpeak": "Prix heures creuses",
+          "offpeak_ranges": "Plages d'heures creuses",
+          "price_entity": "Entité donnant le prix du kWh",
+          "source_price_1": "Prix du kWh, capteur n° 1",
+          "source_price_2": "Prix du kWh, capteur n° 2",
+          "source_price_3": "Prix du kWh, capteur n° 3",
+          "source_price_4": "Prix du kWh, capteur n° 4",
+          "source_price_5": "Prix du kWh, capteur n° 5",
+          "source_price_6": "Prix du kWh, capteur n° 6"
+        },
+        "data_description": {
+          "offpeak_ranges": "Une ou plusieurs plages séparées par des virgules, par exemple 23:10-07:11 ou 01:00-07:00, 12:30-14:30.",
+          "price_entity": "Son état doit être le prix actuel d'un kWh. La dernière valeur connue est gardée si elle devient indisponible."
+        }
+      },
+      "subscription": {
+        "title": "Abonnement",
+        "data": {
+          "subscription": "Montant mensuel",
+          "subscription_entity": "Entité donnant le montant mensuel"
+        },
+        "data_description": {
+          "subscription_entity": "La dernière valeur connue est gardée si l'entité devient indisponible."
+        }
+      },
+      "weather": {
+        "title": "Météo",
+        "description": "Facultatif. Avec une température extérieure, Wattcast apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
+        "data": {
+          "weather": "Entité météo (prévisions)",
+          "outdoor_sensor": "Thermomètre extérieur"
+        }
+      },
+      "heating": {
+        "title": "Chauffage",
+        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
+        "data": {
+          "heat_pump": "Consommation de la pompe à chaleur",
+          "hdd_base": "Base des degrés-jours",
+          "season_month": "Mois de début de la saison de chauffe"
+        },
+        "data_description": {
+          "heat_pump": "Compteurs d'énergie ou puissances, additionnés (plusieurs radiateurs, plusieurs unités). Laissez vide pour ignorer.",
+          "hdd_base": "Température extérieure sous laquelle le logement commence à chauffer.",
+          "season_month": "1 = janvier … 12 = décembre."
+        }
+      }
+    },
+    "error": {
+      "bad_unit": "Unité non reconnue : il faut Wh, kWh, MWh, W ou kW.",
+      "bad_daily_unit": "Un relevé quotidien doit être une énergie : Wh, kWh ou MWh.",
+      "bad_statistic": "Statistique inutilisable : il faut une énergie cumulée en Wh, kWh ou MWh.",
+      "no_source": "Choisissez au moins un élément.",
+      "too_many_sources": "Un prix par capteur est limité à 6 capteurs.",
+      "delayed_price": "Des données en différé ne donnent qu'un total par jour : les plages horaires ne s'appliquent pas. Utilisez un tarif fixe, ou un prix par capteur si heures pleines et creuses sont séparées.",
+      "bad_ranges": "Plages invalides. Exemple : 23:10-07:11, 12:30-14:30"
+    }
+  },
+  "options": {
+    "step": {
+      "meter": {
+        "title": "Wattcast",
+        "description": "Seule la mesure de consommation du logement est nécessaire ; tout le reste est facultatif et se modifie ensuite. Commencez par dire comment cette mesure arrive dans Home Assistant.",
+        "data": {
+          "name": "Nom",
+          "source_mode": "Comment arrive la consommation",
+          "price_mode": "Prix de l'électricité",
+          "subscription_mode": "Abonnement"
+        },
+        "data_description": {
+          "source_mode": "Temps réel : une pince, un module de tableau, la téléinformation du compteur. En différé : les données du distributeur (Linky par Enedis ou votre fournisseur), qui arrivent le lendemain ; Wattcast suit alors le jour, la semaine, le mois et l'année, sans l'heure en cours.",
+          "price_mode": "Sans prix, tout est suivi en kWh. « Un prix par capteur » convient quand heures pleines et heures creuses ont chacune leur capteur.",
+          "subscription_mode": "Ignoré sans prix. Réparti au prorata des jours du mois."
+        }
+      },
+      "source": {
+        "title": "Mesure de consommation",
+        "description": "Choisissez ce qui mesure la consommation du logement. Plusieurs éléments sont additionnés : index heures pleines + index heures creuses, trois phases, plusieurs compteurs. En temps réel : compteurs d'énergie (Wh, kWh, MWh) ou puissances (W, kW) ; un compteur est plus fiable, il rattrape ce qui a été consommé pendant un arrêt de Home Assistant. Avec du solaire, choisissez le compteur d'import réseau.",
+        "data": {
+          "source": "Consommation du logement",
+          "max_power": "Puissance maximale plausible"
+        },
+        "data_description": {
+          "source": "Capteurs, ou statistiques si vous avez choisi les statistiques importées.",
+          "max_power": "Un peu au-dessus de la puissance de votre abonnement. Un saut du compteur qui la dépasserait sur le temps écoulé est rejeté (compteur remis à zéro, valeur aberrante)."
+        }
+      },
+      "price": {
+        "title": "Prix de l'électricité",
+        "description": "Le prix est appliqué à l'énergie au moment où elle est comptée : changer de tarif ne recalcule pas le passé.\n\n{sources}",
+        "data": {
+          "price": "Prix du kWh",
+          "price_peak": "Prix heures pleines",
+          "price_offpeak": "Prix heures creuses",
+          "offpeak_ranges": "Plages d'heures creuses",
+          "price_entity": "Entité donnant le prix du kWh",
+          "source_price_1": "Prix du kWh, capteur n° 1",
+          "source_price_2": "Prix du kWh, capteur n° 2",
+          "source_price_3": "Prix du kWh, capteur n° 3",
+          "source_price_4": "Prix du kWh, capteur n° 4",
+          "source_price_5": "Prix du kWh, capteur n° 5",
+          "source_price_6": "Prix du kWh, capteur n° 6"
+        },
+        "data_description": {
+          "offpeak_ranges": "Une ou plusieurs plages séparées par des virgules, par exemple 23:10-07:11 ou 01:00-07:00, 12:30-14:30.",
+          "price_entity": "Son état doit être le prix actuel d'un kWh. La dernière valeur connue est gardée si elle devient indisponible."
+        }
+      },
+      "subscription": {
+        "title": "Abonnement",
+        "data": {
+          "subscription": "Montant mensuel",
+          "subscription_entity": "Entité donnant le montant mensuel"
+        },
+        "data_description": {
+          "subscription_entity": "La dernière valeur connue est gardée si l'entité devient indisponible."
+        }
+      },
+      "weather": {
+        "title": "Météo",
+        "description": "Facultatif. Avec une température extérieure, Wattcast apprend combien le logement consomme selon le temps qu'il fait et affine ses estimations. L'idéal est de donner les deux : le thermomètre pour apprendre sur l'historique, la météo pour les prévisions.",
+        "data": {
+          "weather": "Entité météo (prévisions)",
+          "outdoor_sensor": "Thermomètre extérieur"
+        }
+      },
+      "heating": {
+        "title": "Chauffage",
+        "description": "Facultatif. Avec la consommation de la pompe à chaleur, Wattcast la compare à ce qui est attendu pour le froid qu'il a fait (degrés-jours).",
+        "data": {
+          "heat_pump": "Consommation de la pompe à chaleur",
+          "hdd_base": "Base des degrés-jours",
+          "season_month": "Mois de début de la saison de chauffe"
+        },
+        "data_description": {
+          "heat_pump": "Compteurs d'énergie ou puissances, additionnés (plusieurs radiateurs, plusieurs unités). Laissez vide pour ignorer.",
+          "hdd_base": "Température extérieure sous laquelle le logement commence à chauffer.",
+          "season_month": "1 = janvier … 12 = décembre."
+        }
+      }
+    },
+    "error": {
+      "bad_unit": "Unité non reconnue : il faut Wh, kWh, MWh, W ou kW.",
+      "bad_daily_unit": "Un relevé quotidien doit être une énergie : Wh, kWh ou MWh.",
+      "bad_statistic": "Statistique inutilisable : il faut une énergie cumulée en Wh, kWh ou MWh.",
+      "no_source": "Choisissez au moins un élément.",
+      "too_many_sources": "Un prix par capteur est limité à 6 capteurs.",
+      "delayed_price": "Des données en différé ne donnent qu'un total par jour : les plages horaires ne s'appliquent pas. Utilisez un tarif fixe, ou un prix par capteur si heures pleines et creuses sont séparées.",
+      "bad_ranges": "Plages invalides. Exemple : 23:10-07:11, 12:30-14:30"
+    }
+  },
+  "selector": {
+    "price_mode": {
+      "options": {
+        "none": "Aucun (suivi en kWh)",
+        "fixed": "Tarif fixe",
+        "peak_offpeak": "Heures pleines / heures creuses (plages horaires)",
+        "per_source": "Un prix par capteur (index HP et HC séparés)",
+        "entity": "Entité de prix existante"
+      }
+    },
+    "source_mode": {
+      "options": {
+        "live": "Temps réel (pince, module, téléinformation)",
+        "statistics": "En différé : statistiques importées (Linky, fournisseur)",
+        "daily_value": "En différé : capteur donnant la consommation de la veille"
+      }
+    },
+    "subscription_mode": {
+      "options": {
+        "none": "Aucun",
+        "fixed": "Montant mensuel fixe",
+        "entity": "Entité existante"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "energy_hour": {
+        "name": "Consommation de l'heure"
+      },
+      "energy_hour_estimate": {
+        "name": "Consommation estimée de l'heure"
+      },
+      "cost_hour": {
+        "name": "Coût de l'heure"
+      },
+      "cost_hour_estimate": {
+        "name": "Coût estimé de l'heure"
+      },
+      "energy_day": {
+        "name": "Consommation du jour"
+      },
+      "energy_day_estimate": {
+        "name": "Consommation estimée du jour"
+      },
+      "cost_day": {
+        "name": "Coût du jour"
+      },
+      "cost_day_estimate": {
+        "name": "Coût estimé du jour"
+      },
+      "energy_week": {
+        "name": "Consommation de la semaine"
+      },
+      "energy_week_estimate": {
+        "name": "Consommation estimée de la semaine"
+      },
+      "cost_week": {
+        "name": "Coût de la semaine"
+      },
+      "cost_week_estimate": {
+        "name": "Coût estimé de la semaine"
+      },
+      "energy_month": {
+        "name": "Consommation du mois"
+      },
+      "energy_month_estimate": {
+        "name": "Consommation estimée du mois"
+      },
+      "cost_month": {
+        "name": "Coût du mois"
+      },
+      "cost_month_estimate": {
+        "name": "Coût estimé du mois"
+      },
+      "energy_year": {
+        "name": "Consommation de l'année"
+      },
+      "energy_year_estimate": {
+        "name": "Consommation estimée de l'année"
+      },
+      "cost_year": {
+        "name": "Coût de l'année"
+      },
+      "cost_year_estimate": {
+        "name": "Coût estimé de l'année"
+      },
+      "price": {
+        "name": "Prix du kWh"
+      },
+      "subscription": {
+        "name": "Abonnement mensuel"
+      },
+      "method": {
+        "name": "Méthode d'estimation",
+        "state": {
+          "model": "Modèle météo",
+          "average": "Moyenne des 7 derniers jours",
+          "pace": "Rythme du jour"
+        }
+      },
+      "rejected_jumps": {
+        "name": "Sauts de compteur rejetés"
+      },
+      "degree_days_day": {
+        "name": "Degrés-jours du jour"
+      },
+      "degree_days_month": {
+        "name": "Degrés-jours du mois"
+      },
+      "degree_days_season": {
+        "name": "Degrés-jours de la saison"
+      },
+      "heating_month": {
+        "name": "Chauffage du mois"
+      },
+      "heating_season": {
+        "name": "Chauffage de la saison"
+      }
+    }
+  }
+}

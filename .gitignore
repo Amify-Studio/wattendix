@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+dev/config/*
+!dev/config/configuration.yaml
+dev/data/
+dev/credentials.txt
+dev/token.txt
+dev/mirror.json
+dev/icon_preview.png
