@@ -781,8 +781,11 @@ if (!customElements.get("wattendix-card")) {
   window.customCards.push({
     type: "wattendix-card",
     name: "Wattendix",
-    description: "Your electricity bill, live and forecast / Votre facture d'électricité en direct",
-    preview: false,
+    description: lang() === "fr"
+      ? "Votre facture d'électricité en direct, et où elle va finir."
+      : "Your electricity bill, live, and where it is heading.",
+    // The picker shows the card with the first Wattendix meter found.
+    preview: true,
     documentationURL: "https://github.com/Amify-Studio/wattendix",
   });
 }

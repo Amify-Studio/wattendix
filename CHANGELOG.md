@@ -4,6 +4,7 @@
 
 - A device the integration no longer provides (such as one left under the former `wattcast` domain) can be deleted from its device page.
 - The version reported to the card matches the release.
+- The card shows a live preview in the card picker, with a description in the dashboard's language.
 
 ## 0.2.0
 
