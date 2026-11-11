@@ -3,6 +3,10 @@
 **Votre facture d'électricité en direct, et là où elle va finir.**
 *Your electricity bill, live — and where it is heading.* ([English below](#english))
 
+<img src="docs/images/card-charts.fr.png" width="620" alt="La carte Wattcast : tuiles et courbes par période">
+
+**[Guide de démarrage](docs/demarrage.md)** · **[Getting started](docs/getting-started.md)**
+
 Wattcast est une intégration Home Assistant, livrée avec sa carte Lovelace. À partir d'un seul capteur de consommation, elle suit ce que le logement a consommé cette heure, aujourd'hui, cette semaine, ce mois et cette année, et **estime le total de chaque période avant qu'elle soit finie** — en kWh, et en euros dès qu'un prix est renseigné.
 
 ## Ce qu'elle fait
@@ -18,6 +22,18 @@ Wattcast est une intégration Home Assistant, livrée avec sa carte Lovelace. À
 - **Compteur protégé** : un retour à zéro ou un saut aberrant du capteur source n'est pas compté.
 
 Tout est facultatif sauf le capteur de consommation. Sans prix, tout fonctionne en kWh.
+
+## En images
+
+| Tuiles | Tableau résumé |
+| --- | --- |
+| <img src="docs/images/card-tiles.fr.png" width="430" alt="Tuiles"> | <img src="docs/images/card-table.fr.png" width="430" alt="Tableau résumé"> |
+
+| Mini tableau | Sans prix (kWh) | Sur téléphone |
+| --- | --- | --- |
+| <img src="docs/images/card-mini.fr.png" width="270" alt="Mini tableau"> | <img src="docs/images/card-energy.fr.png" width="300" alt="Carte en kWh"> | <img src="docs/images/card-phone.fr.png" width="200" alt="Sur téléphone, thème sombre"> |
+
+Données inventées. Les écrans de réglage sont dans le [guide de démarrage](docs/demarrage.md).
 
 ## Installation
 
@@ -113,6 +129,10 @@ Wattcast is a Home Assistant integration shipped with its Lovelace card. From a 
 - **Heating** (optional): degree-days and heat pump consumption against what the weather calls for.
 - **Guarded counter**: a reset to zero or an absurd jump of the source is not counted.
 
+<img src="docs/images/card-charts.en.png" width="620" alt="The Wattcast card: tiles and one curve per period">
+
+Step by step, with screenshots: **[Getting started](docs/getting-started.md)**.
+
 Install through HACS as a custom repository (`https://github.com/Amify-Studio/wattcast`, type *Integration*), restart, then add the **Wattcast** integration. The card (`custom:wattcast-card`) is served by the integration and has a visual editor.
 
 ## Development
@@ -121,6 +141,7 @@ Install through HACS as a custom repository (`https://github.com/Amify-Studio/wa
 python -m pytest                                # tests of the calculation core (no Home Assistant needed)
 docker compose -f dev/docker-compose.yml up -d  # test instance on http://localhost:18124
 python dev/make_translations.py                 # regenerate strings.json and translations
+python dev/screenshots.py                       # card screenshots of docs/images (invented data, dev/demo)
 ```
 
 Wattcast est édité par Amify-Studio, sous licence MIT. / Wattcast is published by Amify-Studio under the MIT licence.

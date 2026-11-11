@@ -1,0 +1,217 @@
+<!doctype html>
+<!-- The real Wattcast card fed with invented data, for the screenshots of the README.
+     Driven by dev/screenshots.py. Query: lang, theme, width, home (full|kwh|delayed), config (JSON). -->
+<html>
+<head>
+<meta charset="utf-8">
+<title>Wattcast demo</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --page: #f3f4f6; --card-background-color: #fff; --primary-text-color: #212121;
+    --secondary-text-color: #6f7378; --divider-color: rgba(0, 0, 0, .12);
+    --primary-color: #03a9f4; --error-color: #db4437; --success-color: #43a047; --warning-color: #ffa600;
+    --ha-card-border-radius: 12px;
+  }
+  :root[data-theme="dark"] {
+    --page: #111; --card-background-color: #1c1c1c; --primary-text-color: #e1e1e1;
+    --secondary-text-color: #9b9b9b; --divider-color: rgba(225, 225, 225, .14);
+  }
+  html, body { margin: 0; background: var(--page); }
+  body { padding: 16px; font-family: Roboto, "Segoe UI", sans-serif; color: var(--primary-text-color); }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<script>
+{
+// ---- Stand-ins for the two Home Assistant elements the card uses.
+customElements.define("ha-card", class extends HTMLElement {
+  connectedCallback() {
+    Object.assign(this.style, { display: "block", boxSizing: "border-box",
+      background: "var(--card-background-color)", borderRadius: "var(--ha-card-border-radius)",
+      border: "1px solid var(--divider-color)" });
+  }
+});
+customElements.define("ha-icon", class extends HTMLElement {
+  async connectedCallback() {
+    const root = this.attachShadow({ mode: "open" });
+    const name = (this.getAttribute("icon") || "").replace("mdi:", "");
+    const style = `<style>:host { display: inline-flex; width: var(--mdc-icon-size, 24px);
+      height: var(--mdc-icon-size, 24px); } svg { width: 100%; height: 100%; fill: currentColor; }</style>`;
+    root.innerHTML = style;
+    try {
+      const text = await (await fetch(`https://cdn.jsdelivr.net/npm/@mdi/svg@7.4.47/svg/${name}.svg`)).text();
+      if (text.startsWith("<svg")) root.innerHTML = style + text;
+    } catch (err) { /* no icon */ }
+  }
+});
+
+// ---- A frozen instant, so every capture shows the same thing: Wed 18 Nov 2026, 17:40.
+const NOW = new Date(2026, 10, 18, 17, 40).getTime();
+Date.now = () => NOW;
+const HOUR = 3600000, DAY = 24 * HOUR;
+
+// ---- An invented home: consumption follows an invented outdoor temperature.
+const noise = (n) => { const x = Math.sin(n * 12.9898 + 78.233) * 43758.5453; return x - Math.floor(x); };
+const dayIndex = (ms) => { const d = new Date(ms); return Math.round(Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) / DAY); };
+const temperature = (ms) => {
+  const d = new Date(ms);
+  const doy = (Date.UTC(d.getFullYear(), d.getMonth(), d.getDate()) - Date.UTC(d.getFullYear(), 0, 1)) / DAY;
+  return 12.5 - 9 * Math.cos((2 * Math.PI * (doy - 15)) / 365) + (noise(dayIndex(ms)) - 0.5) * 6;
+};
+const dayEnergy = (ms) => (8.5 + Math.max(0, 16 - temperature(ms)) * 1.15) * (0.93 + noise(dayIndex(ms) + 7) * 0.14);
+const SHAPE = [5.2, 5.6, 5, 3.4, 2.2, 2, 2.6, 4.6, 5, 3.8, 3.2, 3.1, 4.2, 4, 3.1, 2.9, 3.2, 4.3, 5.8, 6.6, 6.2, 5, 4.2, 4.8];
+const SHAPE_SUM = SHAPE.reduce((a, b) => a + b, 0);
+const PEAK = 0.2068, OFFPEAK = 0.1579, SUBSCRIPTION = 16.4, SUB_DAY = (SUBSCRIPTION * 12) / 365;
+const isOffpeak = (ms) => { const h = new Date(ms).getHours(); return h >= 22 || h < 6; };
+const hourEnergy = (ms) => dayEnergy(ms) * (SHAPE[new Date(ms).getHours()] / SHAPE_SUM)
+  * (0.85 + noise(Math.floor(ms / HOUR)) * 0.3);
+/** [kWh, energy cost] between two instants. */
+const span = (from, to) => {
+  let kwh = 0, cost = 0;
+  for (let h = Math.floor(from / HOUR) * HOUR; h < to; h += HOUR) {
+    const share = (Math.min(to, h + HOUR) - Math.max(from, h)) / HOUR;
+    const e = hourEnergy(h) * share;
+    kwh += e;
+    cost += e * (isOffpeak(h) ? OFFPEAK : PEAK);
+  }
+  return [kwh, cost];
+};
+const subscription = (from, to) => ((to - from) / DAY) * SUB_DAY;
+
+const startOf = (ms, period) => {
+  const d = new Date(ms);
+  if (period === "hour") return new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()).getTime();
+  if (period === "day") return new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime();
+  if (period === "week") return new Date(d.getFullYear(), d.getMonth(), d.getDate() - ((d.getDay() + 6) % 7)).getTime();
+  if (period === "month") return new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+  return new Date(d.getFullYear(), 0, 1).getTime();
+};
+const endOf = (start, period) => {
+  const d = new Date(start);
+  if (period === "hour") return start + HOUR;
+  if (period === "day") return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1).getTime();
+  if (period === "week") return new Date(d.getFullYear(), d.getMonth(), d.getDate() + 7).getTime();
+  if (period === "month") return new Date(d.getFullYear(), d.getMonth() + 1, 1).getTime();
+  return new Date(d.getFullYear() + 1, 0, 1).getTime();
+};
+const previousStart = (start, period) => startOf(start - 1, period);
+
+const query = new URLSearchParams(location.search);
+const home = query.get("home") || "full";
+const language = query.get("lang") || "fr";
+const priced = home !== "kwh";
+const delayed = home === "delayed";
+// A delayed source knows nothing after yesterday midnight.
+const KNOWN = delayed ? startOf(NOW, "day") : NOW;
+const PERIODS = delayed ? ["day", "week", "month", "year"] : ["hour", "day", "week", "month", "year"];
+const AVERAGES = { hour: 7, day: 7, week: 4, month: 12, year: 1 };
+const STEP = { hour: 300000, day: 600000, week: HOUR, month: HOUR, year: DAY };
+const round = (v, n = 2) => Math.round(v * 10 ** n) / 10 ** n;
+
+const states = {};
+const entities = {};
+const curves = {};
+const estimates = {};
+const put = (key, state, attributes = {}) => {
+  const id = `sensor.${home}_${key}`;
+  entities[key] = id;
+  states[id] = { entity_id: id, state: String(state), attributes, last_updated: "demo" };
+};
+
+for (const period of PERIODS) {
+  const reference = delayed && period === "day" ? KNOWN - 1 : NOW;
+  const start = startOf(reference, period);
+  const end = endOf(start, period);
+  const until = Math.min(Math.max(KNOWN, start), end);
+  const [kwh, energyCost] = span(start, until);
+  const [restKwh, restCost] = span(until, end);
+  const drift = 1 + (noise(start / DAY) - 0.45) * 0.08; // the forecast is not the truth
+  const kwhEstimate = kwh + restKwh * drift;
+  const costEstimate = energyCost + restCost * drift + subscription(start, end);
+  const before = previousStart(start, period);
+  const [prevKwh, prevCost] = span(before, start);
+  let avgKwh = 0, avgCost = 0, cursor = start;
+  for (let i = 0; i < AVERAGES[period]; i++) {
+    const s = previousStart(cursor, period);
+    const [k, c] = span(s, cursor);
+    avgKwh += k / AVERAGES[period];
+    avgCost += (c + subscription(s, cursor)) / AVERAGES[period];
+    cursor = s;
+  }
+  const finished = delayed && period === "day";
+  const trend = finished ? round(((kwh - prevKwh) / prevKwh) * 100, 1) : round(((kwhEstimate - prevKwh) / prevKwh) * 100, 1);
+  const common = { trend, period_start: new Date(start).toISOString(), method: "model" };
+  if (delayed) common.data_until = new Date(KNOWN - DAY / 2).toISOString().slice(0, 10);
+  const energyAttrs = { ...common, estimate: round(kwhEstimate, 3), previous: round(prevKwh, 3), average: round(avgKwh, 3) };
+  if (period === "year") {
+    const lastYear = startOf(start - 1, "year");
+    const toDate = span(lastYear, lastYear + (until - start))[0];
+    energyAttrs.previous_year_total = round(prevKwh, 0);
+    energyAttrs.previous_year_to_date = round(toDate, 0);
+    energyAttrs.gap_to_previous_year = round(((kwh - toDate) / toDate) * 100, 1);
+  }
+  put(`energy_${period}`, round(kwh, 3), energyAttrs);
+  if (!finished) put(`energy_${period}_estimate`, round(kwhEstimate, 3));
+  const cost = energyCost + subscription(start, until);
+  if (priced) {
+    put(`cost_${period}`, round(cost), { ...common, estimate: round(costEstimate),
+      previous: round(prevCost + subscription(before, start)), average: round(avgCost) });
+    if (!finished) put(`cost_${period}_estimate`, round(costEstimate));
+  }
+  // Curve of the period so far, and what the estimate was saying along the way.
+  const points = [], rows = [];
+  for (let at = start + STEP[period]; at < until; at += STEP[period]) {
+    const [k, c] = span(start, at);
+    points.push([at, round(k, 3), priced ? round(c + subscription(start, at), 3) : null]);
+    const left = 1 - (at - start) / (end - start);
+    const t = (at - start) / (end - start);
+    const wobble = 1 + (Math.sin(t * 9 + start % 7) * 0.035 + Math.sin(t * 31 + 2) * 0.012 - 0.03) * Math.sqrt(left);
+    rows.push({ start: at - STEP[period], end: at, mean: (priced ? costEstimate : kwhEstimate) * wobble });
+  }
+  curves[period] = points;
+  estimates[entities[`${priced ? "cost" : "energy"}_${period}_estimate`]] = rows;
+}
+
+if (priced && !delayed) {
+  put("price", isOffpeak(NOW) ? OFFPEAK : PEAK, { mode: "peak_offpeak", tariff_period: isOffpeak(NOW) ? "offpeak" : "peak" });
+}
+if (priced) put("subscription", SUBSCRIPTION, { per_day: round(SUB_DAY, 4) });
+put("method", "model", { temperature_today: round(temperature(NOW), 1), reason: null });
+if (home === "full") {
+  put("heating_month", 141.6, { expected: 150.3, gap: -5.8, degree_days: 118.4, period_start: new Date(startOf(NOW, "month")).toISOString() });
+  put("heating_season", 268.2, { expected: 259.1, gap: 3.5, degree_days: 204.7, period_start: new Date(2026, 9, 1).toISOString() });
+}
+
+const entry = { entry_id: home, title: "Wattcast", currency: "EUR", priced, delayed,
+  subscription: priced, temperature: true, heating: home === "full", entities };
+const hass = {
+  states, language, locale: { language },
+  callWS: async (message) => {
+    if (message.type === "wattcast/info") return { entries: [entry] };
+    if (message.type === "wattcast/curve") return { points: curves[message.period] || [] };
+    if (message.type === "recorder/statistics_during_period") {
+      const id = message.statistic_ids[0];
+      return { [id]: estimates[id] || [] };
+    }
+    throw new Error(`unknown ${message.type}`);
+  },
+};
+
+document.documentElement.dataset.theme = query.get("theme") || "light";
+const stage = document.getElementById("stage");
+stage.style.width = `${query.get("width") || 520}px`;
+const script = document.createElement("script");
+script.src = "/custom_components/wattcast/frontend/wattcast-card.js";
+script.onload = () => {
+  const card = document.createElement("wattcast-card");
+  card.setConfig({ entry: home, ...JSON.parse(query.get("config") || "{}") });
+  stage.appendChild(card);
+  card.hass = hass;
+};
+document.head.appendChild(script);
+}
+</script>
+</body>
+</html>
