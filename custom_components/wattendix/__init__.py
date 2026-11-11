@@ -15,6 +15,7 @@ from homeassistant.config_entries import ConfigEntry, ConfigEntryState
 from homeassistant.const import Platform
 from homeassistant.core import HomeAssistant, callback
 from homeassistant.helpers import config_validation as cv
+from homeassistant.helpers import device_registry as dr
 from homeassistant.helpers import entity_registry as er
 from homeassistant.helpers.storage import Store
 from homeassistant.helpers.typing import ConfigType
@@ -74,6 +75,17 @@ async def async_unload_entry(hass: HomeAssistant, entry: WattendixConfigEntry) -
     if unloaded:
         await entry.runtime_data.async_unload()
     return unloaded
+
+
+async def async_remove_config_entry_device(
+    hass: HomeAssistant, entry: ConfigEntry, device: dr.DeviceEntry
+) -> bool:
+    """Let the user delete a device this entry no longer provides.
+
+    Only a stale device can go, such as one left behind under the former
+    `wattcast` domain; the meter's own device stays.
+    """
+    return (DOMAIN, entry.entry_id) not in device.identifiers
 
 
 async def async_remove_entry(hass: HomeAssistant, entry: ConfigEntry) -> None:

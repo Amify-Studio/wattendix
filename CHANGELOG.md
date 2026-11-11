@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.2.1
+
+- A device the integration no longer provides (such as one left under the former `wattcast` domain) can be deleted from its device page.
+- The version reported to the card matches the release.
+
 ## 0.2.0
 
 - Renamed to **Wattendix** (domain `wattendix`, card `custom:wattendix-card`): the name Wattcast and its domain were already used by another integration in the catalog.
