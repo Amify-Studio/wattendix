@@ -1,0 +1,16 @@
+# Second Home Assistant, set up like a user's, to try installing Wattendix from the
+# built-in Marketplace (Settings → Marketplace → Add from link). Kept stopped.
+#   docker compose -f dev/marketplace/docker-compose.yml start
+#   then open http://localhost:18125/local/auth.html?lang=fr (signs in, see trial.py)
+name: wattendix-marketplace
+services:
+  homeassistant:
+    image: ghcr.io/home-assistant/home-assistant:2026.11.0
+    container_name: wattendix-marketplace
+    ports:
+      - "18125:8123"
+    volumes:
+      - ./config:/config
+    environment:
+      TZ: Europe/Paris
+    restart: "no"

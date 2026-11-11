@@ -9,3 +9,6 @@ dev/credentials.txt
 dev/token.txt
 dev/mirror.json
 dev/icon_preview.png
+dev/marketplace/config/
+dev/marketplace/token.txt
+dev/marketplace/credentials.txt
