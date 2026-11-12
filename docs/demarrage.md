@@ -88,7 +88,7 @@ Sur un tableau de bord : *Modifier → Ajouter une carte → Wattendix*. Il n'y 
 
 Chaque tuile montre le montant en cours, une barre qui avance vers l'estimation (le petit repère marque la période précédente), et la tendance par rapport à la période précédente. Un appui ouvre l'historique.
 
-L'éditeur visuel propose trois dispositions et quelques options :
+Par défaut, la carte montre l'heure, le jour, la semaine, le mois et l'année ; l'éditeur permet d'en retirer. L'éditeur visuel propose trois dispositions et quelques options :
 
 <img src="images/card-editor.fr.png" width="360" alt="Éditeur visuel de la carte">
 
@@ -98,7 +98,7 @@ L'éditeur visuel propose trois dispositions et quelques options :
 | **Tableau résumé** | <img src="images/card-table.fr.png" width="520" alt="Tableau résumé"> |
 | **Mini tableau** | <img src="images/card-mini.fr.png" width="320" alt="Mini tableau"> |
 
-Sur les courbes : en bleu ce qui est consommé, en pointillés orange l'estimation au fil du temps, en gris la période précédente au même moment (hier à la même heure, le même jour du mois précédent…), en violet la moyenne. Au survol, l'infobulle compare les deux valeurs. Si l'historique ne couvre pas toute la période précédente, son total reste une simple ligne grise.
+Sur les courbes : en bleu ce qui est consommé, en pointillés orange l'estimation au fil du temps, en gris la période précédente au même moment (hier à la même heure, le même jour du mois précédent…), en violet la moyenne. Au survol, l'infobulle en haut à droite compare les deux valeurs à l'instant pointé (au-delà de maintenant, seule la période précédente) ; si elle est trop longue pour la largeur, elle se termine par « … ». Si l'historique ne couvre pas toute la période précédente, son total reste une simple ligne grise.
 
 La carte s'adapte à ce que vous avez configuré :
 

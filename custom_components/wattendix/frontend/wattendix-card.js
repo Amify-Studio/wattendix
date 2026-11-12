@@ -217,7 +217,11 @@ const STYLE = `
     background: color-mix(in srgb, var(--primary-text-color) 4%, transparent); }
   .chart-head { display: flex; justify-content: space-between; gap: 8px; align-items: baseline;
     font-size: 13px; color: var(--secondary-text-color); margin-bottom: 4px; }
-  .tip { font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  /* One line whatever the tooltip says: the title keeps its width and the
+     tooltip shrinks with an ellipsis, so the curve never moves while hovering. */
+  .chart-head > span:first-child { flex: none; white-space: nowrap; }
+  .tip { flex: 1 1 0; min-width: 0; text-align: right;
+    font-size: 11.5px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .chart svg { display: block; width: 100%; height: auto; touch-action: pan-y; }
   .chart text { font-size: 9.5px; fill: var(--secondary-text-color); }
   .grid { stroke: var(--divider-color); stroke-width: .6; stroke-dasharray: 3 3; }

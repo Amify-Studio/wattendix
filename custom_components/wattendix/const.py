@@ -5,7 +5,7 @@ from __future__ import annotations
 from typing import Final
 
 DOMAIN: Final = "wattendix"
-VERSION: Final = "0.3.0"
+VERSION: Final = "0.3.1"
 
 CONF_SOURCE: Final = "source"
 CONF_MAX_POWER: Final = "max_power"

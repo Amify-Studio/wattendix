@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.1
+
+- The curve title no longer wraps while hovering: the tooltip stays on one line and ends with "…" when it is too long, so the curve keeps its place.
+- The getting-started guides describe the default periods and the tooltip; the curve screenshot shows the hour.
+
 ## 0.3.0
 
 - The curves lay the previous period over the current one, at the same moment (yesterday 14:00 against today 14:00), instead of a flat line at its total. The tooltip gives both values; past the current moment it shows the previous period alone. A previous period the history covers only in part keeps the flat line.

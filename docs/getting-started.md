@@ -88,7 +88,7 @@ On a dashboard: *Edit → Add card → Wattendix*. Nothing to add to the resourc
 
 Each tile shows the amount so far, a bar moving towards the estimate (the small tick marks the previous period), and the trend against the previous period. Tap a tile to open its history.
 
-The visual editor offers three layouts and a few options:
+By default the card shows the hour, the day, the week, the month and the year; the editor lets you remove some. The visual editor offers three layouts and a few options:
 
 <img src="images/card-editor.en.png" width="360" alt="Visual editor of the card">
 
@@ -98,7 +98,7 @@ The visual editor offers three layouts and a few options:
 | **Summary table** | <img src="images/card-table.en.png" width="520" alt="Summary table"> |
 | **Mini table** | <img src="images/card-mini.en.png" width="320" alt="Mini table"> |
 
-On the curves: blue is what has been used, dashed orange is the estimate over time, grey the previous period at the same moment (yesterday at the same hour, the same day of last month…), purple the average. Hovering compares both values. When the history does not cover the whole previous period, its total stays a plain grey line.
+On the curves: blue is what has been used, dashed orange is the estimate over time, grey the previous period at the same moment (yesterday at the same hour, the same day of last month…), purple the average. Hovering shows, top right, both values at the pointed moment (past now, the previous period alone); when it is too long for the width, it ends with "…". When the history does not cover the whole previous period, its total stays a plain grey line.
 
 The card adapts to what you configured:
 

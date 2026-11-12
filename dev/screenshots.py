@@ -33,7 +33,7 @@ ALL = ["day", "week", "month", "year"]
 # name: (card width, theme, home, card configuration)
 SHOTS = {
     "card-tiles": (760, "light", "full", {"periods": ALL}),
-    "card-charts": (620, "light", "full", {"periods": ALL, "charts": True, "hide_heating": True}),
+    "card-charts": (620, "light", "full", {"periods": ["hour", *ALL], "charts": True, "hide_heating": True}),
     "card-table": (620, "light", "full", {"periods": ["hour", *ALL], "layout": "table"}),
     "card-mini": (360, "light", "full", {"periods": ALL, "layout": "mini", "descending": True}),
     "card-phone": (360, "dark", "full", {"periods": ["day", "month"], "charts": True, "hide_heating": True}),
