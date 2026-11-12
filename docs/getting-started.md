@@ -17,15 +17,25 @@ Everything else (price, standing charge, weather, heating) is optional and can b
 
 ## 1. Install
 
+The quickest way, from a device connected to your Home Assistant:
+
+[![Open your Home Assistant Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
+The button opens your Home Assistant (the first time, the My Home Assistant site asks for its address) and offers to add the repository: *Add*, then *Install* on the Wattendix page that shows up. Without the button:
+
 1. Open *Settings → Marketplace*, then *Add from link*.
 2. Paste `https://github.com/Amify-Studio/wattendix` and confirm. The first time, Home Assistant asks you to connect a GitHub account: follow the link shown and enter the code.
 3. Open **Wattendix**, then *Install*. No restart needed: the setup wizard opens right away.
 
-On 2026.10, with HACS: ⋮ menu → *Custom repositories*, add the same address as type *Integration*, install **Wattendix**, restart, then *Settings → Devices & services → Add integration → Wattendix*.
+On 2026.10, with HACS: [open the repository in HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=Amify-Studio&repository=wattendix&category=integration) (or ⋮ menu → *Custom repositories*, add the same address as type *Integration*), install **Wattendix**, restart, then add the integration (button below).
 
 ## 2. Set up the integration
 
-The wizard only shows the screens your choices need. To add a second meter later: *Settings → Devices & services → Add integration → Wattendix*.
+The wizard only shows the screens your choices need. To add a second meter later:
+
+[![Add the integration to your Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wattendix)
+
+or *Settings → Devices & services → Add integration → Wattendix*.
 
 ### What you have
 

@@ -5,6 +5,8 @@
 
 <img src="docs/images/card-charts.fr.png" width="620" alt="La carte Wattendix : tuiles et courbes par période">
 
+[![Ouvrir dans le Marketplace de votre Home Assistant](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
 **[Guide de démarrage](docs/demarrage.md)** · **[Getting started](docs/getting-started.md)**
 
 Wattendix est une intégration Home Assistant, livrée avec sa carte Lovelace. À partir d'un seul capteur de consommation, elle suit ce que le logement a consommé cette heure, aujourd'hui, cette semaine, ce mois et cette année, et **estime le total de chaque période avant qu'elle soit finie** — en kWh, et en euros dès qu'un prix est renseigné.
@@ -39,14 +41,22 @@ Données inventées. Les écrans de réglage sont dans le [guide de démarrage](
 
 ### Avec le Marketplace (Home Assistant 2026.11 et plus)
 
-1. *Paramètres → Marketplace → Ajouter grâce à un lien* → collez `https://github.com/Amify-Studio/wattendix`. Home Assistant demande de connecter un compte GitHub la première fois.
+[![Ouvrir dans le Marketplace de votre Home Assistant](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
+1. Le bouton ci-dessus ouvre votre Home Assistant et propose d'ajouter le dépôt : *Ajouter*, et la page de Wattendix s'affiche. Sans le bouton : *Paramètres → Marketplace → Ajouter grâce à un lien* → collez `https://github.com/Amify-Studio/wattendix`. Home Assistant demande de connecter un compte GitHub la première fois.
 2. Ouvrez **Wattendix** → *Installer*. L'assistant de configuration s'ouvre aussitôt, sans redémarrage.
 
 ### Avec HACS (Home Assistant 2026.10)
 
-1. HACS → menu ⋮ → *Dépôts personnalisés* → ajoutez `https://github.com/Amify-Studio/wattendix`, type *Intégration*.
+[![Ouvrir dans HACS](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
+1. Le bouton ci-dessus ouvre le dépôt dans HACS. Sans le bouton : HACS → menu ⋮ → *Dépôts personnalisés* → ajoutez `https://github.com/Amify-Studio/wattendix`, type *Intégration*.
 2. Installez **Wattendix**, puis redémarrez Home Assistant.
-3. *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
+3. Ajoutez l'intégration :
+
+   [![Ajouter l'intégration à votre Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wattendix)
+
+   ou *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
 
 ### À la main
 
@@ -138,7 +148,9 @@ Wattendix is a Home Assistant integration shipped with its Lovelace card. From a
 
 Step by step, with screenshots: **[Getting started](docs/getting-started.md)**.
 
-Install from *Settings → Marketplace → Add from link* with `https://github.com/Amify-Studio/wattendix` (Home Assistant 2026.11 and newer; the setup wizard opens right after installing). On 2026.10, add it to HACS as a custom repository, type *Integration*, restart, then add the **Wattendix** integration. The card (`custom:wattendix-card`) is served by the integration and has a visual editor.
+[![Open your Home Assistant Marketplace](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
+The button opens your Home Assistant (2026.11 and newer) and offers to add the repository; then *Install*, and the setup wizard opens right away. Without the button: *Settings → Marketplace → Add from link* with `https://github.com/Amify-Studio/wattendix`. On 2026.10, add it to HACS as a custom repository, type *Integration*, restart, then add the **Wattendix** integration. The card (`custom:wattendix-card`) is served by the integration and has a visual editor.
 
 ## Development
 

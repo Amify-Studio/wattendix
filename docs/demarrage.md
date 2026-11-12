@@ -17,15 +17,25 @@ Tout le reste (prix, abonnement, météo, chauffage) est facultatif et peut êtr
 
 ## 1. Installer
 
+Le plus simple, depuis un appareil connecté à votre Home Assistant :
+
+[![Ouvrir dans le Marketplace de votre Home Assistant](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=Amify-Studio&repository=wattendix&category=integration)
+
+Le bouton ouvre votre Home Assistant (la première fois, le site My Home Assistant demande son adresse) et propose d'ajouter le dépôt : *Ajouter*, puis *Installer* sur la page de Wattendix qui s'affiche. Sans le bouton :
+
 1. Ouvrez *Paramètres → Marketplace*, puis *Ajouter grâce à un lien*.
 2. Collez `https://github.com/Amify-Studio/wattendix` et validez. La première fois, Home Assistant vous demande de connecter un compte GitHub : suivez le lien affiché et saisissez le code.
 3. Ouvrez **Wattendix**, puis *Installer*. Pas besoin de redémarrer : l'assistant de configuration s'ouvre aussitôt.
 
-En 2026.10, avec HACS : menu ⋮ → *Dépôts personnalisés*, ajoutez la même adresse en type *Intégration*, installez **Wattendix**, redémarrez, puis *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
+En 2026.10, avec HACS : [ouvrir le dépôt dans HACS](https://my.home-assistant.io/redirect/hacs_repository/?owner=Amify-Studio&repository=wattendix&category=integration) (ou menu ⋮ → *Dépôts personnalisés*, ajoutez la même adresse en type *Intégration*), installez **Wattendix**, redémarrez, puis ajoutez l'intégration (bouton ci-dessous).
 
 ## 2. Configurer l'intégration
 
-L'assistant ne montre que les écrans utiles à vos choix. Pour ajouter un second compteur plus tard : *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
+L'assistant ne montre que les écrans utiles à vos choix. Pour ajouter un second compteur plus tard :
+
+[![Ajouter l'intégration à votre Home Assistant](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=wattendix)
+
+ou *Paramètres → Appareils et services → Ajouter une intégration → Wattendix*.
 
 ### Ce que vous avez
 
