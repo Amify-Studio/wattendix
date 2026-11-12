@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.3.0
+
+- The curves lay the previous period over the current one, at the same moment (yesterday 14:00 against today 14:00), instead of a flat line at its total. The tooltip gives both values; past the current moment it shows the previous period alone. A previous period the history covers only in part keeps the flat line.
+- New cards show the hour too, with its curve against the previous hour.
+
 ## 0.2.1
 
 - A device the integration no longer provides (such as one left under the former `wattcast` domain) can be deleted from its device page.

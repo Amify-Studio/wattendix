@@ -136,10 +136,9 @@ def ws_info(
 async def ws_curve(
     hass: HomeAssistant, connection: websocket_api.ActiveConnection, msg: dict[str, Any]
 ) -> None:
-    """Cumulative consumption of the current period, for the card's curve."""
+    """Cumulative consumption of the current and previous periods, for the card's curves."""
     entry = hass.config_entries.async_get_entry(msg["entry_id"])
     if entry is None or entry.domain != DOMAIN or entry.state is not ConfigEntryState.LOADED:
         connection.send_error(msg["id"], websocket_api.ERR_NOT_FOUND, "Unknown Wattendix entry")
         return
-    points = await entry.runtime_data.async_curve(msg["period"])
-    connection.send_result(msg["id"], {"points": points})
+    connection.send_result(msg["id"], await entry.runtime_data.async_curve(msg["period"]))

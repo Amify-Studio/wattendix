@@ -84,7 +84,7 @@ Pour la météo, l'idéal est de donner **les deux** : le thermomètre a un hist
 
 ```yaml
 type: custom:wattendix-card
-periods: [day, week, month, year]   # hour, day, week, month, year
+periods: [hour, day, week, month, year]
 display: auto                       # auto | cost | energy
 layout: tiles                       # tiles | table (tableau résumé) | mini (tableau nu, très compact)
 # columns: [current, estimate, previous, average, trend]   # colonnes du tableau
@@ -98,7 +98,7 @@ layout: tiles                       # tiles | table (tableau résumé) | mini (t
 
 Chaque tuile montre le montant en cours, une barre vers l'estimation (le repère marque la période précédente), la pastille de tendance, l'estimation et la période précédente. La carte n'affiche que ce que la configuration fournit ; un appui sur une tuile ouvre l'historique de l'entité. Elle a un éditeur visuel.
 
-En disposition `table`, la même information tient dans un tableau résumé (une ligne par période, colonnes au choix). Avec `charts: true`, chaque période a sa courbe : cumul en cours, estimation, période précédente et moyenne, dessinée sans dépendance et reconstruite depuis l'historique du compteur.
+En disposition `table`, la même information tient dans un tableau résumé (une ligne par période, colonnes au choix). Avec `charts: true`, chaque période a sa courbe : cumul en cours, estimation et moyenne, avec la période précédente superposée au même moment (hier à 14 h face à aujourd'hui à 14 h), pour comparer d'un coup d'œil ; l'infobulle donne les deux valeurs. Les courbes sont dessinées sans dépendance et reconstruites depuis l'historique du compteur.
 
 ## Comment l'estimation est calculée
 

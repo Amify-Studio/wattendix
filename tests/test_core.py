@@ -23,7 +23,7 @@ spec.loader.exec_module(package)
 from wattendix_core import model as mdl  # noqa: E402
 from wattendix_core.engine import Engine, build_days, remaining_today  # noqa: E402
 from wattendix_core.meter import Meter, convert, kind_of  # noqa: E402
-from wattendix_core.periods import days_in_month, end_of, fraction, start_of  # noqa: E402
+from wattendix_core.periods import days_in_month, end_of, fraction, shift_to, start_of  # noqa: E402
 from wattendix_core.tariff import MODE_PEAK, Tariff, parse_ranges  # noqa: E402
 
 TZ = ZoneInfo("Europe/Paris")
@@ -144,6 +144,18 @@ def test_periods() -> None:
     assert fraction("hour", now) == pytest.approx(0.5)
     # Daylight saving: 25 October 2026 lasts 25 hours.
     assert (end_of("day", at(2026, 10, 25, 12)).timestamp() - start_of("day", at(2026, 10, 25, 12)).timestamp()) == 25 * 3600
+
+
+def test_previous_period_on_current_axis() -> None:
+    def moved(before: datetime, start: datetime, end: datetime, when: datetime) -> datetime:
+        return datetime.fromtimestamp(shift_to(before, start, end, when.timestamp()), TZ)
+
+    # Yesterday 14:00 lands on today 14:00, even across the DST change of 25 October.
+    assert moved(at(2026, 10, 25), at(2026, 10, 26), at(2026, 10, 27), at(2026, 10, 25, 14)) == at(2026, 10, 26, 14)
+    # Day 12 of October lands on day 12 of November.
+    assert moved(at(2026, 10, 1), at(2026, 11, 1), at(2026, 12, 1), at(2026, 10, 12, 6)) == at(2026, 11, 12, 6)
+    # The 31st of October has no match in November: it stays at the end of the axis.
+    assert moved(at(2026, 10, 1), at(2026, 11, 1), at(2026, 12, 1), at(2026, 11, 1)) == at(2026, 12, 1)
 
 
 # ------------------------------------------------------------------ model

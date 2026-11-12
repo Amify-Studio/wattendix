@@ -98,7 +98,7 @@ The visual editor offers three layouts and a few options:
 | **Summary table** | <img src="images/card-table.en.png" width="520" alt="Summary table"> |
 | **Mini table** | <img src="images/card-mini.en.png" width="320" alt="Mini table"> |
 
-On the curves: blue is what has been used, dashed orange is the estimate over time, grey the previous period, purple the average.
+On the curves: blue is what has been used, dashed orange is the estimate over time, grey the previous period at the same moment (yesterday at the same hour, the same day of last month…), purple the average. Hovering compares both values. When the history does not cover the whole previous period, its total stays a plain grey line.
 
 The card adapts to what you configured:
 

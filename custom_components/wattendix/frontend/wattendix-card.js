@@ -2,7 +2,7 @@
  * Plain custom element: no build step, no dependency. */
 
 const PERIODS = ["hour", "day", "week", "month", "year"];
-const DEFAULT_PERIODS = ["day", "week", "month", "year"];
+const DEFAULT_PERIODS = ["hour", "day", "week", "month", "year"];
 const ICONS = {
   hour: "mdi:clock-outline",
   day: "mdi:weather-sunny",
@@ -227,6 +227,7 @@ const STYLE = `
   .a-cur { fill: var(--wc-cur); opacity: .16; }
   .l-est { fill: none; stroke: var(--wc-est); stroke-width: 1.6; stroke-dasharray: 5 3; stroke-linejoin: round; }
   .l-prev { stroke: var(--wc-prev); stroke-width: 1.3; }
+  .l-prev-c { fill: none; stroke: var(--wc-prev); stroke-width: 1.4; stroke-linejoin: round; opacity: .85; }
   .l-avg { stroke: var(--wc-avg); stroke-width: 1.3; stroke-dasharray: 2 3; }
   .legend { display: flex; flex-wrap: wrap; gap: 2px 12px; margin-top: 4px; font-size: 11.5px;
     color: var(--secondary-text-color); }
@@ -642,9 +643,12 @@ class WattendixCard extends HTMLElement {
           type: "wattendix/curve", entry_id: entry.entry_id, period: w.period,
         });
         const column = kind === "cost" ? 2 : 1;
+        const take = (points) => (points || []).filter((p) => p[column] !== null).map((p) => [p[0], p[column]]);
         series[w.period] = {
           start: w.start,
-          cur: (curve.points || []).filter((p) => p[column] !== null).map((p) => [p[0], p[column]]),
+          cur: take(curve.points),
+          // The previous period, already laid on this period's axis by the integration.
+          prev: take(curve.previous),
           est: pick(w.estimate, "mean", (row) => (row.start + row.end) / 2),
         };
       }
@@ -670,13 +674,17 @@ class WattendixCard extends HTMLElement {
     const previous = num(a.previous);
     const average = num(a.average);
     const data = this._series[period];
-    const recorded = data && data.start === start ? data : { cur: [], est: [] };
+    const recorded = data && data.start === start ? data : { cur: [], est: [], prev: [] };
     const cur = [[start, 0], ...recorded.cur.filter((p) => p[0] < now)];
     if (value !== null) cur.push([now, value]);
     const est = recorded.est.filter((p) => p[0] < now);
     if (estimate !== null) est.push([now, estimate]);
+    // The previous period as a whole curve: where it stood at this same moment,
+    // and where it ended. Without it, its total stays a flat line.
+    const prev = recorded.prev && recorded.prev.length ? [[start, 0], ...recorded.prev] : [];
 
-    const top = Math.max(...cur.map((p) => p[1]), ...est.map((p) => p[1]), previous ?? 0, average ?? 0, 0.01);
+    const top = Math.max(...cur.map((p) => p[1]), ...est.map((p) => p[1]), ...prev.map((p) => p[1]),
+      previous ?? 0, average ?? 0, 0.01);
     const step = niceStep(top);
     const max = Math.ceil(top / step - 1e-9) * step;
     const { w, h, l, r, t: mt, b } = CHART;
@@ -687,7 +695,7 @@ class WattendixCard extends HTMLElement {
       const f = useCost ? this._money(v, entry.currency, estimate) : this._energy(v, estimate);
       return `${f.text} ${esc(f.unit)}`;
     };
-    this._geometry[period] = { start, end, cur, est, format, locale };
+    this._geometry[period] = { start, end, now, cur, est, prev, format, locale };
 
     let svg = "";
     const digits = step >= 1 ? 0 : step >= 0.1 ? 1 : 2;
@@ -700,7 +708,8 @@ class WattendixCard extends HTMLElement {
     }
     const flat = (v, cls) => (v === null ? ""
       : `<line class="${cls}" x1="${l}" x2="${w - r}" y1="${y(v)}" y2="${y(v)}"></line>`);
-    svg += flat(previous, "l-prev") + flat(average, "l-avg");
+    svg += (prev.length > 1 ? `<path class="l-prev-c" d="${path(prev)}"></path>` : flat(previous, "l-prev"))
+      + flat(average, "l-avg");
     if (cur.length > 1) {
       svg += `<path class="a-cur" d="${path(cur)}L${x(now).toFixed(1)} ${y(0)}L${x(start)} ${y(0)}Z"></path>`
         + `<path class="l-cur" d="${path(cur)}"></path>`;
@@ -731,20 +740,34 @@ class WattendixCard extends HTMLElement {
     const time = g.start + ((Math.min(Math.max(view, l), w - r) - l) / (w - l - r)) * (g.end - g.start);
     const nearest = (points) => points.reduce(
       (best, p) => (best === null || Math.abs(p[0] - time) < Math.abs(best[0] - time) ? p : best), null);
-    const cur = nearest(g.cur);
-    if (!cur) return;
-    const est = nearest(g.est);
+    // Value of a cumulative curve at a moment, between its two surrounding points.
+    const at = (points, moment) => {
+      if (!points.length || moment < points[0][0]) return null;
+      const i = points.findIndex((p) => p[0] >= moment);
+      if (i === -1) return points[points.length - 1][1];
+      if (i === 0 || points[i][0] === moment) return points[i][1];
+      const [a, b] = [points[i - 1], points[i]];
+      return a[1] + ((b[1] - a[1]) * (moment - a[0])) / (b[0] - a[0]);
+    };
+    // Up to now the cursor follows this period; past it, the previous period alone.
+    const anchor = time <= g.now ? nearest(g.cur) : nearest(g.prev);
+    if (!anchor) return;
+    const moment = anchor[0];
     const period = svg.dataset.period;
     const options = period === "hour" || period === "day" ? { hour: "2-digit", minute: "2-digit" }
       : period === "week" ? { weekday: "short", hour: "2-digit", minute: "2-digit" }
       : { day: "numeric", month: "short" };
     const t = TEXT[lang(this._hass)];
-    const when = new Intl.DateTimeFormat(g.locale, options).format(new Date(cur[0]));
-    const tip = svg.parentElement.querySelector(".tip");
-    tip.innerHTML = `${esc(when)} · ${t.current} ${g.format(cur[1])}${
-      est && Math.abs(est[0] - cur[0]) < (g.end - g.start) / 20 ? ` · ${t.estimate} ${g.format(est[1])}` : ""}`;
+    const when = new Intl.DateTimeFormat(g.locale, options).format(new Date(moment));
+    const parts = [esc(when)];
+    if (moment <= g.now) parts.push(`${t.current} ${g.format(at(g.cur, moment))}`);
+    const before = at(g.prev, moment);
+    if (before !== null) parts.push(`${t[`prev_${period}`]} ${g.format(before)}`);
+    const est = moment <= g.now ? nearest(g.est) : null;
+    if (est && Math.abs(est[0] - moment) < (g.end - g.start) / 20) parts.push(`${t.estimate} ${g.format(est[1])}`);
+    svg.parentElement.querySelector(".tip").innerHTML = parts.join(" · ");
     const cursor = svg.querySelector(".cursor");
-    const cx = l + ((cur[0] - g.start) / (g.end - g.start)) * (w - l - r);
+    const cx = l + ((moment - g.start) / (g.end - g.start)) * (w - l - r);
     cursor.setAttribute("x1", cx);
     cursor.setAttribute("x2", cx);
     cursor.setAttribute("visibility", "visible");

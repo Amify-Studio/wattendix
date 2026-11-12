@@ -170,7 +170,14 @@ for (const period of PERIODS) {
     const wobble = 1 + (Math.sin(t * 9 + start % 7) * 0.035 + Math.sin(t * 31 + 2) * 0.012 - 0.03) * Math.sqrt(left);
     rows.push({ start: at - STEP[period], end: at, mean: (priced ? costEstimate : kwhEstimate) * wobble });
   }
-  curves[period] = points;
+  // The previous period, laid on this period's axis as the integration does.
+  const previous = [];
+  for (let at = before + STEP[period]; at <= start; at += STEP[period]) {
+    const [k, c] = span(before, at);
+    previous.push([Math.min(start + (at - before), end), round(k, 3),
+      priced ? round(c + subscription(before, at), 3) : null]);
+  }
+  curves[period] = { points, previous };
   estimates[entities[`${priced ? "cost" : "energy"}_${period}_estimate`]] = rows;
 }
 
@@ -190,7 +197,7 @@ const hass = {
   states, language, locale: { language },
   callWS: async (message) => {
     if (message.type === "wattendix/info") return { entries: [entry] };
-    if (message.type === "wattendix/curve") return { points: curves[message.period] || [] };
+    if (message.type === "wattendix/curve") return curves[message.period] || { points: [], previous: [] };
     if (message.type === "recorder/statistics_during_period") {
       const id = message.statistic_ids[0];
       return { [id]: estimates[id] || [] };

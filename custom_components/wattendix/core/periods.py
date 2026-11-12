@@ -43,6 +43,19 @@ def previous_start(period: str, start: datetime) -> datetime:
     return start_of(period, datetime.fromtimestamp(start.timestamp() - 60, start.tzinfo))
 
 
+def shift_to(before: datetime, start: datetime, end: datetime, ts: float) -> float:
+    """Move a moment of the period starting at ``before`` into the one at ``start``.
+
+    It keeps the wall-clock offset from the period start (yesterday 14:00 lands
+    on today 14:00, across a DST change too) and stops at ``end``, for a
+    previous month or year longer than the current one.
+    """
+    tz = start.tzinfo
+    offset = datetime.fromtimestamp(ts, tz).replace(tzinfo=None) - before.replace(tzinfo=None)
+    moved = (start.replace(tzinfo=None) + offset).replace(tzinfo=tz)
+    return min(moved.timestamp(), end.timestamp())
+
+
 def fraction(period: str, now: datetime) -> float:
     """Share of the period already elapsed, 0..1."""
     start = start_of(period, now).timestamp()

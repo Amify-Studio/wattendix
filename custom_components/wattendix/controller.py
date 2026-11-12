@@ -65,7 +65,7 @@ from .const import (
 from .core import model as mdl
 from .core.engine import Engine, build_days, daily_temperatures, heating_points
 from .core.meter import Meter, convert, kind_of
-from .core.periods import end_of, season_start, start_of
+from .core.periods import end_of, previous_start, season_start, shift_to, start_of
 from .core.tariff import Tariff, parse_ranges
 
 _LOGGER = logging.getLogger(__name__)
@@ -75,6 +75,8 @@ SAVE_DELAY = 120
 TICK = timedelta(seconds=60)
 FORECAST_INTERVAL = timedelta(minutes=30)
 DELAYED_INTERVAL = timedelta(minutes=30)
+# Share of the previous period the statistics must cover for the card to draw its curve.
+PREVIOUS_COVERAGE = 0.9
 NOTIFY_MIN_INTERVAL = 5.0
 DEGREE_MAX_GAP = 900.0
 
@@ -653,78 +655,122 @@ class WattendixController:
             _add(total, hourly)
         return total
 
-    async def async_curve(self, period: str) -> list[list[float | None]]:
-        """Cumulative consumption of the current period, for the card's curve.
+    async def async_curve(self, period: str) -> dict[str, list[list[float | None]]]:
+        """Cumulative consumption of the current and previous periods, for the card.
 
-        Rebuilt from the source statistics, so the curve is complete from the
+        Rebuilt from the source statistics, so the curves are complete from the
         first day, whenever Wattendix was installed. Each point is
         [epoch ms, kWh, cost with standing charge (None without price)].
+        The previous period is laid on the current one's axis at the same
+        wall-clock offset (yesterday 14:00 sits at today 14:00), so the card
+        can compare both at a glance.
         """
         now = dt_util.now()
         start, end = start_of(period, now), end_of(period, now)
-        tz, low, high = now.tzinfo, start.timestamp(), now.timestamp()
-        span = end.timestamp() - low
+        before = previous_start(period, start)
         subscription = (self.snapshot.get("periods", {}).get(period) or {}).get("subscription") or 0.0
+        if self.delayed and period in ("hour", "day"):
+            return {"points": [], "previous": []}
+        if not self.delayed and "recorder" not in self.hass.config.components:
+            return {"points": [], "previous": []}
 
+        current_raw, _ = await self._cumulative(period, start, now)
+        previous_raw, covered = await self._cumulative(period, before, start)
+        # A previous period known only in part would look like a frugal one: leave
+        # it out (the card then keeps its total as a flat line).
+        if covered < PREVIOUS_COVERAGE * (start.timestamp() - before.timestamp()):
+            previous_raw = []
+
+        # Costs follow the shape of the recorded hours, at the mean price really
+        # paid: this period's mean price, and the previous period's own total.
+        # Delayed sources already carry the real cost of each day.
+        scale = previous_scale = 1.0
+        if not self.delayed:
+            current = self.engine.d["periods"][period]
+            scale = previous_scale = 0.0
+            if current_raw and current_raw[-1][2] > 0 and current["kwh"] > 0:
+                scale = (current["cost"] / current["kwh"]) / (current_raw[-1][2] / current_raw[-1][1])
+            closed = self.engine.d["previous"].get(period) or {}
+            if previous_raw and previous_raw[-1][2] > 0:
+                if closed.get("cost") is not None:
+                    previous_scale = closed["cost"] / previous_raw[-1][2]
+                elif current["kwh"] > 0:
+                    previous_scale = (current["cost"] / current["kwh"]) / (
+                        previous_raw[-1][2] / previous_raw[-1][1]
+                    )
+
+        def points(
+            raw: list[tuple[float, float, float]], low: datetime, high: datetime, factor: float
+        ) -> list[tuple[float, float, float | None]]:
+            span = high.timestamp() - low.timestamp()
+            return [
+                (
+                    ts,
+                    round(k, 3),
+                    round(c * factor + subscription * (ts - low.timestamp()) / span, 3)
+                    if self.priced
+                    else None,
+                )
+                for ts, k, c in raw
+            ]
+
+        return {
+            "points": [[int(ts * 1000), k, c] for ts, k, c in points(current_raw, start, end, scale)],
+            "previous": [
+                [int(shift_to(before, start, end, ts) * 1000), k, c]
+                for ts, k, c in points(previous_raw, before, start, previous_scale)
+            ],
+        }
+
+    async def _cumulative(
+        self, period: str, low: datetime, high: datetime
+    ) -> tuple[list[tuple[float, float, float]], float]:
+        """Running (end of slot, kWh, unscaled cost) from ``low`` up to ``high``.
+
+        Also gives how many seconds of that span the recorded slots cover.
+        """
+        tz = low.tzinfo
+        covered = 0.0
         if self.delayed:
-            if period in ("hour", "day"):
-                return []
-            points: list[list[float | None]] = []
+            out: list[tuple[float, float, float]] = []
             kwh = cost = 0.0
             for key, entry in sorted(((self.engine.d.get("delayed") or {}).get("days") or {}).items()):
                 day = datetime.fromisoformat(key).replace(tzinfo=tz)
-                if day.timestamp() < low:
+                if not low.timestamp() <= day.timestamp() < high.timestamp():
                     continue
                 kwh += entry["kwh"]
                 cost += entry.get("cost") or 0.0
-                ts = end_of("day", day).timestamp()
-                points.append(
-                    [
-                        int(ts * 1000),
-                        round(kwh, 3),
-                        round(cost + subscription * (ts - low) / span, 3) if self.priced else None,
-                    ]
-                )
-            return points
+                end = end_of("day", day).timestamp()
+                covered += end - day.timestamp()
+                out.append((end, kwh, cost))
+            return out, covered
 
-        if "recorder" not in self.hass.config.components:
-            return []
         rows: dict[int, tuple[float, int]] = {}
         if period in ("hour", "day"):
-            fine = await self._series(self.meters, start, "5minute")
-            coarse = await self._series(self.meters, start, "hour")
+            fine = await self._series(self.meters, low, "5minute")
+            coarse = await self._series(self.meters, low, "hour")
             detailed = {ts - ts % 3600 for ts in fine}
             rows = {ts: (v, 300) for ts, v in fine.items()}
             rows.update({ts: (v, 3600) for ts, v in coarse.items() if ts not in detailed})
         elif period in ("week", "month"):
-            rows = {ts: (v, 3600) for ts, v in (await self._series(self.meters, start, "hour")).items()}
+            rows = {ts: (v, 3600) for ts, v in (await self._series(self.meters, low, "hour")).items()}
         else:
-            rows = {ts: (v, 86400) for ts, v in (await self._series(self.meters, start, "day")).items()}
+            rows = {ts: (v, 86400) for ts, v in (await self._series(self.meters, low, "day")).items()}
 
         prices = self.tariff.hour_prices(self.engine.d["price"]) if self.priced else None
-        raw: list[tuple[float, float, float]] = []
+        bottom, top = low.timestamp(), high.timestamp()
+        out = []
         kwh = cost = 0.0
         for ts, (value, length) in sorted(rows.items()):
-            if ts < low or ts + length > high + 1 or not 0 <= value <= self.max_kw * length / 3600:
+            if ts < bottom or ts + length > top + 1 or not 0 <= value <= self.max_kw * length / 3600:
                 continue
             kwh += value
             cost += value * (
                 prices[datetime.fromtimestamp(ts, tz).hour] if prices and length <= 3600 else 1.0
             )
-            raw.append((ts + length, kwh, cost))
-        # Costs follow the shape of the recorded hours, at the mean price really paid this period.
-        current = self.engine.d["periods"][period]
-        scale = 0.0
-        if cost > 0 and kwh > 0 and current["kwh"] > 0:
-            scale = (current["cost"] / current["kwh"]) / (cost / kwh)
-        return [
-            [
-                int(ts * 1000),
-                round(k, 3),
-                round(c * scale + subscription * (ts - low) / span, 3) if self.priced else None,
-            ]
-            for ts, k, c in raw
-        ]
+            covered += length
+            out.append((ts + length, kwh, cost))
+        return out, covered
 
     # ------------------------------------------------------------ learning
     async def _learn_job(self, _: datetime | None = None) -> None:
