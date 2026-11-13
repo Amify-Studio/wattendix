@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- At the end of the first meter, the setup wizard says to reload the page before adding the card: Home Assistant only loads the card of a newly installed integration when the page opens again. The guides say it too.
+
 ## 0.3.1
 
 - The curve title no longer wraps while hovering: the tooltip stays on one line and ends with "…" when it is too long, so the curve keeps its place.

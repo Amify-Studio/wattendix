@@ -92,7 +92,7 @@ Everything can be changed later with *Configure* on the integration page, withou
 
 ## 3. Add the card
 
-On a dashboard: *Edit → Add card → Wattendix*. Nothing to add to the resources, the card comes with the integration. If it is missing from the list, reload the browser page.
+On a dashboard: *Edit → Add card → Wattendix*. Nothing to add to the resources, the card comes with the integration. Right after installing, reload the browser page first (Ctrl+F5, or close and reopen the app): Home Assistant only loads a new card when the page opens, and the wizard says so at the end of the first meter.
 
 <img src="images/card-tiles.en.png" width="760" alt="Tiles: day, week, month, year, heating">
 

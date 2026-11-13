@@ -226,8 +226,24 @@ def build(fr: bool) -> dict:
         },
     }
     step = steps(fr)
+    # Shown when the first meter is created: the frontend only loads the card of
+    # a newly set up integration when the page is opened again.
+    create_entry = {
+        "first": "\n\n".join(
+            [
+                t(
+                    "Les capteurs de Wattendix sont créés.",
+                    "The Wattendix sensors are created.",
+                ),
+                t(
+                    "**Pour ajouter la carte Wattendix** à un tableau de bord, rechargez d'abord la page du navigateur (ou fermez et rouvrez l'application) : Home Assistant ne charge une nouvelle carte qu'à l'ouverture de la page.",
+                    "**To add the Wattendix card** to a dashboard, reload the browser page first (or close and reopen the app): Home Assistant only loads a new card when the page opens.",
+                ),
+            ]
+        )
+    }
     return {
-        "config": {"step": step, "error": errors},
+        "config": {"step": step, "error": errors, "create_entry": create_entry},
         "options": {"step": step, "error": errors},
         "selector": selectors,
         "entity": {"sensor": sensors},

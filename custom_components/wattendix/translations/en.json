@@ -90,6 +90,9 @@
       "too_many_sources": "One price per sensor is limited to 6 sensors.",
       "delayed_price": "Delayed data only gives one total per day: time ranges cannot apply. Use a flat rate, or one price per sensor if peak and off-peak are separate.",
       "bad_ranges": "Invalid ranges. Example: 23:10-07:11, 12:30-14:30"
+    },
+    "create_entry": {
+      "first": "The Wattendix sensors are created.\n\n**To add the Wattendix card** to a dashboard, reload the browser page first (or close and reopen the app): Home Assistant only loads a new card when the page opens."
     }
   },
   "options": {

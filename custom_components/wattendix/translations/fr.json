@@ -90,6 +90,9 @@
       "too_many_sources": "Un prix par capteur est limité à 6 capteurs.",
       "delayed_price": "Des données en différé ne donnent qu'un total par jour : les plages horaires ne s'appliquent pas. Utilisez un tarif fixe, ou un prix par capteur si heures pleines et creuses sont séparées.",
       "bad_ranges": "Plages invalides. Exemple : 23:10-07:11, 12:30-14:30"
+    },
+    "create_entry": {
+      "first": "Les capteurs de Wattendix sont créés.\n\n**Pour ajouter la carte Wattendix** à un tableau de bord, rechargez d'abord la page du navigateur (ou fermez et rouvrez l'application) : Home Assistant ne charge une nouvelle carte qu'à l'ouverture de la page."
     }
   },
   "options": {

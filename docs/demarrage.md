@@ -92,7 +92,7 @@ Tout se modifie ensuite par *Configurer*, sur la page de l'intégration, sans pe
 
 ## 3. Ajouter la carte
 
-Sur un tableau de bord : *Modifier → Ajouter une carte → Wattendix*. Il n'y a rien à ajouter dans les ressources, la carte est fournie par l'intégration. Si elle n'apparaît pas dans la liste, rechargez la page du navigateur.
+Sur un tableau de bord : *Modifier → Ajouter une carte → Wattendix*. Il n'y a rien à ajouter dans les ressources, la carte est fournie par l'intégration. Juste après l'installation, rechargez d'abord la page du navigateur (Ctrl+F5, ou fermez et rouvrez l'application) : Home Assistant ne charge une nouvelle carte qu'à l'ouverture de la page, et l'assistant le rappelle à la fin du premier compteur.
 
 <img src="images/card-tiles.fr.png" width="760" alt="Carte en tuiles : jour, semaine, mois, année, chauffage">
 

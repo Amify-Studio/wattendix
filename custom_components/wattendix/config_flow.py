@@ -367,7 +367,12 @@ class WattendixConfigFlow(WattendixSteps, ConfigFlow, domain=DOMAIN):
     def _finish(self) -> ConfigFlowResult:
         options = dict(self._values)
         title = str(options.pop(CONF_NAME, "") or "Wattendix").strip()
-        return self.async_create_entry(title=title, data={}, options=options)
+        # The card only shows up once the page is opened again: say so with
+        # the first meter, when the integration has just been installed.
+        first = not self._async_current_entries(include_ignore=False)
+        return self.async_create_entry(
+            title=title, data={}, options=options, description="first" if first else None
+        )
 
     @staticmethod
     @callback
